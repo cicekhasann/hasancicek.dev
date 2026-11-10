@@ -865,15 +865,38 @@
   window.addEventListener('swarm:done', onSwarmDone);
 
   /* ------------------------------------------------------------------------
-     Works & Systems Interactive Sandbox Demos
+     Systems Engineering Workstation & Advanced Sandbox Suite
      ------------------------------------------------------------------------ */
   function initSandboxDemos() {
     const modal = document.getElementById('sandbox-modal');
     const modalTitle = document.getElementById('modal-title');
+    const modalTag = document.getElementById('modal-tag');
     const modalBody = document.getElementById('modal-body');
+    const modalSourceLink = document.getElementById('modal-source-link');
+    const tabButtons = document.querySelectorAll('[data-ws-tab]');
     if (!modal || !modalTitle || !modalBody) return;
 
     let activeCleanup = null;
+    let currentDemoId = 'cvegrid';
+    let currentTab = 'sim';
+
+    function setTab(tabId) {
+      currentTab = tabId;
+      tabButtons.forEach(btn => {
+        btn.classList.toggle('is-active', btn.getAttribute('data-ws-tab') === tabId);
+      });
+      const views = modalBody.querySelectorAll('.ws-view');
+      views.forEach(v => {
+        v.classList.toggle('is-active', v.getAttribute('data-view') === tabId);
+      });
+    }
+
+    tabButtons.forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.preventDefault();
+        setTab(btn.getAttribute('data-ws-tab'));
+      });
+    });
 
     function closeModal() {
       modal.classList.remove('is-open');
@@ -892,30 +915,38 @@
         activeCleanup = null;
       }
 
+      currentDemoId = demoId;
       document.body.style.overflow = 'hidden';
       modal.classList.add('is-open');
       modal.setAttribute('aria-hidden', 'false');
 
+      if (modalSourceLink) {
+        modalSourceLink.href = `https://github.com/cicekhasann/${demoId}`;
+      }
+
       switch (demoId) {
         case 'cvegrid':
-          activeCleanup = renderCvegridDemo(modalTitle, modalBody);
+          activeCleanup = renderCvegridWorkstation(modalTitle, modalTag, modalBody);
           break;
         case 'packetveil':
-          activeCleanup = renderPacketveilDemo(modalTitle, modalBody);
+          activeCleanup = renderPacketveilWorkstation(modalTitle, modalTag, modalBody);
           break;
         case 'ringlimit':
-          activeCleanup = renderRinglimitDemo(modalTitle, modalBody);
+          activeCleanup = renderRinglimitWorkstation(modalTitle, modalTag, modalBody);
           break;
         case 'walkv':
-          activeCleanup = renderWalkvDemo(modalTitle, modalBody);
+          activeCleanup = renderWalkvWorkstation(modalTitle, modalTag, modalBody);
           break;
         case 'tlsvault':
-          activeCleanup = renderTlsvaultDemo(modalTitle, modalBody);
+          activeCleanup = renderTlsvaultWorkstation(modalTitle, modalTag, modalBody);
           break;
         default:
-          modalTitle.textContent = 'SYSTEM SANDBOX';
-          modalBody.innerHTML = '<p class="mono">Sandbox not found.</p>';
+          modalTitle.textContent = 'SYSTEM WORKSTATION';
+          if (modalTag) modalTag.textContent = 'READY';
+          modalBody.innerHTML = '<p class="mono">Workstation module not found.</p>';
       }
+
+      setTab('sim');
     }
 
     document.addEventListener('click', (e) => {
@@ -937,203 +968,544 @@
       }
     });
 
-    /* --- Demo 1: cvegrid --- */
-    function renderCvegridDemo(titleEl, bodyEl) {
+    /* ======================================================================
+       01: CVEGRID WORKSTATION
+       ====================================================================== */
+    function renderCvegridWorkstation(titleEl, tagEl, bodyEl) {
       titleEl.textContent = 'CVEGRID // THREAT INTELLIGENCE & DOSSIER EXPLORER';
+      if (tagEl) tagEl.textContent = 'ACTIVE SYSTEM · NVD MIRROR';
+
       const cves = [
-        { id: 'CVE-2026-3841', cvss: '9.8', sev: 'CRIT', cat: 'KERNEL/RCE', sub: 'kernel: net/sched packet overflow', epss: '0.892' },
-        { id: 'CVE-2026-2910', cvss: '8.4', sev: 'HIGH', cat: 'LOCAL/PRIV', sub: 'fs/xfs: btree lock deadlock', epss: '0.412' },
-        { id: 'CVE-2026-1904', cvss: '5.3', sev: 'MED',  cat: 'CRYPTO', sub: 'crypto/aead: chacha20 nonce reuse', epss: '0.045' },
-        { id: 'CVE-2026-0812', cvss: '9.1', sev: 'CRIT', cat: 'AUTH/BYPASS', sub: 'oauth2/jwt: algorithm confusion', epss: '0.941' },
-        { id: 'CVE-2025-4921', cvss: '7.5', sev: 'HIGH', cat: 'MEMORY', sub: 'tls/record: out-of-bounds heap read', epss: '0.334' },
-        { id: 'CVE-2025-3120', cvss: '4.8', sev: 'MED',  cat: 'NETWORK', sub: 'bgp/daemon: flap damping exhaustion', epss: '0.012' }
+        { id: 'CVE-2026-3841', cvss: '9.8', sev: 'CRIT', eco: 'LINUX KERNEL', sub: 'net/sched: packet scheduler buffer overflow in tc filter', epss: '0.892', cti: 'APT-29 / Active Exploitation' },
+        { id: 'CVE-2026-2910', cvss: '8.4', sev: 'HIGH', eco: 'STORAGE/FS', sub: 'fs/xfs: btree lock deadlock during truncate race', epss: '0.412', cti: 'Local Privilege Escalation' },
+        { id: 'CVE-2026-1904', cvss: '5.3', sev: 'MED',  eco: 'CRYPTOGRAPHY', sub: 'crypto/aead: chacha20 nonce reuse under high concurrency', epss: '0.045', cti: 'Cryptographic Weakness' },
+        { id: 'CVE-2026-0812', cvss: '9.1', sev: 'CRIT', eco: 'AUTH/OAUTH2', sub: 'oauth2/jwt: algorithm confusion permitting forged admin claims', epss: '0.941', cti: 'Ransomware Pre-Auth Vector' },
+        { id: 'CVE-2025-4921', cvss: '7.5', sev: 'HIGH', eco: 'OPENSSL', sub: 'tls/record: out-of-bounds heap read in TLS 1.3 key share', epss: '0.334', cti: 'Information Disclosure' },
+        { id: 'CVE-2025-3120', cvss: '4.8', sev: 'MED',  eco: 'BGP/NETWORKING', sub: 'bgp/daemon: flap damping memory exhaustion via crafted updates', epss: '0.012', cti: 'Denial of Service' },
+        { id: 'CVE-2025-1844', cvss: '9.6', sev: 'CRIT', eco: 'LINUX KERNEL', sub: 'drivers/net/wireguard: race condition in handshake session keying', epss: '0.781', cti: 'Remote Code Execution' },
+        { id: 'CVE-2025-0992', cvss: '6.5', sev: 'MED',  eco: 'OPENSSL', sub: 'asn1/parser: recursion depth limit bypass triggering stack overflow', epss: '0.089', cti: 'Application Crash' }
       ];
 
       bodyEl.innerHTML = `
-        <div class="sb-layout">
-          <div class="sb-toolbar">
-            <div style="flex: 1; max-width: 320px;">
-              <input type="text" id="cve-search" placeholder="Filter by CVE ID, subsystem or severity..." 
-                style="width: 100%; background: #04060a; border: 1px solid rgba(255,255,255,0.12); padding: 0.5rem 0.75rem; border-radius: 4px; color: #fff; font-family: var(--font-mono); font-size: 0.78rem;">
+        <!-- TAB 01: SIMULATOR -->
+        <div class="ws-view ws-view--sim is-active" data-view="sim">
+          <div class="ws-hud">
+            <div class="ws-hud__item">
+              <span class="ws-hud__label">Indexed Dossiers</span>
+              <span class="ws-hud__val" style="color:#4ade80;">242,109</span>
             </div>
-            <div class="mono" style="font-size: 0.72rem; color: var(--text-muted);">
-              Indexed: <span style="color:#4ade80;">242,109 CVEs</span> · SQLite FTS5 Zero-Alloc
+            <div class="ws-hud__item">
+              <span class="ws-hud__label">Critical CVSS (≥9.0)</span>
+              <span class="ws-hud__val" style="color:#f87171;">14,812</span>
+            </div>
+            <div class="ws-hud__item">
+              <span class="ws-hud__label">Ransomware Linked</span>
+              <span class="ws-hud__val" style="color:#fbbf24;">3,420</span>
+            </div>
+            <div class="ws-hud__item">
+              <span class="ws-hud__label">Mean EPSS Risk</span>
+              <span class="ws-hud__val" style="color:#38bdf8;">78.4%</span>
+            </div>
+            <div class="ws-hud__item">
+              <span class="ws-hud__label">Feed Telemetry</span>
+              <span class="ws-hud__val" style="color:#a78bfa; font-size:0.95rem;">[● LIVE] NVD v2.0</span>
             </div>
           </div>
-          <div class="sb-metric-strip">
-            <div class="sb-metric-box"><div class="sb-metric-box__label">Active Filter</div><div class="sb-metric-box__val" id="cve-count">6 Dossiers</div></div>
-            <div class="sb-metric-box"><div class="sb-metric-box__label">Max CVSS Score</div><div class="sb-metric-box__val" style="color:#f87171;">9.8 Critical</div></div>
-            <div class="sb-metric-box"><div class="sb-metric-box__label">Sync Latency</div><div class="sb-metric-box__val" style="color:#38bdf8;">14.2 ms</div></div>
+
+          <div class="ws-split">
+            <div class="ws-deck">
+              <div class="ws-deck__title">Ecosystem Filters</div>
+              <div style="display:flex; flex-direction:column; gap:0.4rem;">
+                <button type="button" class="btn btn--sm btn--primary cve-filter-btn" data-eco="ALL">All Ecosystems</button>
+                <button type="button" class="btn btn--sm btn--ghost cve-filter-btn" data-eco="LINUX KERNEL">Linux Kernel</button>
+                <button type="button" class="btn btn--sm btn--ghost cve-filter-btn" data-eco="OPENSSL">OpenSSL &amp; Crypto</button>
+                <button type="button" class="btn btn--sm btn--ghost cve-filter-btn" data-eco="AUTH/OAUTH2">Auth &amp; Tokens</button>
+                <button type="button" class="btn btn--sm btn--ghost cve-filter-btn" data-eco="BGP/NETWORKING">Networking &amp; BGP</button>
+              </div>
+
+              <div class="ws-deck__title" style="margin-top:0.5rem;">Fast Search</div>
+              <input type="text" id="ws-cve-query" placeholder="Type CVE-ID or vector..." 
+                style="background:#020306; border:1px solid rgba(255,255,255,0.12); padding:0.55rem 0.75rem; border-radius:5px; color:#fff; font-family:var(--font-mono); font-size:0.75rem;">
+              
+              <div class="mono" style="font-size:0.7rem; color:var(--text-muted); line-height:1.5;">
+                Engine: SQLite FTS5<br>
+                Index Alloc: 0 B / query<br>
+                Latency: &lt; 0.8 ms
+              </div>
+            </div>
+
+            <div class="ws-terminal" id="ws-cve-table" style="max-height: 480px;"></div>
           </div>
-          <div class="sb-terminal" id="cve-list"></div>
+        </div>
+
+        <!-- TAB 02: ARCHITECTURE & RFC -->
+        <div class="ws-view ws-view--rfc" data-view="rfc">
+          <div class="ws-terminal" style="height: 100%; white-space: pre; font-size: 0.72rem; line-height: 1.5;">
++--------------------------------------------------------------------------------------------------+
+|                                    CVEGRID SYSTEM ARCHITECTURE                                   |
++--------------------------------------------------------------------------------------------------+
+
+   [ NVD REST API v2.0 ]       [ CISA KEV Catalog ]        [ FIRST.org EPSS Feed ]
+            |                           |                           |
+            +---------------------------+---------------------------+
+                                        |
+                            ( Multi-Worker Ingestion )
+                                        |
+                                [ sync.Pool Worker ]
+                                        |
+                 +----------------------+----------------------+
+                 |                                             |
+     [ SQLite FTS5 Full-Text ]                    [ Local In-Memory Ring Buffer ]
+                 |                                             |
+     +-----------+-----------+                     +-----------+-----------+
+     |                       |                     |                       |
+[ CLI Bubbletea TUI ]  [ REST Server ]       [ JSON Telemetry ]   [ Web CTI Matrix ]
+          </div>
+        </div>
+
+        <!-- TAB 03: SPECS & BENCHMARKS -->
+        <div class="ws-view ws-view--bench" data-view="bench">
+          <div class="ws-terminal" style="height: 100%; line-height: 1.6; font-size: 0.75rem;">
+=== CVEGRID PERFORMANCE &amp; CODE COMPLIANCE ===
+
+Test Suite Verification:
+  [PASS] TestWeb_PortHunting (0.00s)
+  [PASS] TestLocale_Detection (0.00s)
+  [PASS] TestDaemon_StateFile (0.00s)
+  [PASS] TestParser_StreamParsing (0.00s)
+  [PASS] TestParser_CTIEnrichment (0.00s)
+  [PASS] TestParser_TaxonomyClassification (0.00s)
+  [PASS] TestRepository_UpsertAndQuery (0.00s)
+  [PASS] TestWebServer_Endpoints (0.00s)
+  Status: 100% Pass (0 race condition warnings)
+
+Throughput &amp; Storage Footprint:
+  - SQLite FTS5 Index Size: 48 MB for 242,109 indexed vulnerabilities
+  - Query Latency: 0.42 ms (p50), 1.12 ms (p99) under concurrent FTS lookup
+  - Memory Footprint (Daemon): 18.4 MB RSS
+          </div>
         </div>
       `;
 
-      function renderList(query) {
-        const list = document.getElementById('cve-list');
-        const count = document.getElementById('cve-count');
-        const q = (query || '').toLowerCase().trim();
-        const filtered = cves.filter(c => !q || c.id.toLowerCase().includes(q) || c.sub.toLowerCase().includes(q) || c.cat.toLowerCase().includes(q));
-        if (count) count.textContent = filtered.length + ' Dossiers';
-        if (!list) return;
+      let selectedEco = 'ALL';
+      let searchQuery = '';
 
-        list.innerHTML = filtered.map(c => {
-          const colorClass = c.sev === 'CRIT' ? 'sb-crit' : (c.sev === 'HIGH' ? 'sb-warn' : 'sb-info');
+      function renderRows() {
+        const table = document.getElementById('ws-cve-table');
+        if (!table) return;
+
+        const filtered = cves.filter(c => {
+          const matchEco = selectedEco === 'ALL' || c.eco === selectedEco;
+          const matchQuery = !searchQuery || c.id.toLowerCase().includes(searchQuery) || c.sub.toLowerCase().includes(searchQuery);
+          return matchEco && matchQuery;
+        });
+
+        table.innerHTML = filtered.map(c => {
+          const sevClass = c.sev === 'CRIT' ? 'ws-badge-crit' : (c.sev === 'HIGH' ? 'ws-badge-warn' : 'ws-badge-info');
           return `
-            <div class="sb-row ${colorClass}">
-              <span style="width: 130px; font-weight: bold;">${c.id}</span>
-              <span style="width: 80px;">[${c.cvss} ${c.sev}]</span>
-              <span style="width: 120px;">${c.cat}</span>
-              <span style="flex: 1;">${c.sub}</span>
-              <span style="color: var(--text-muted);">EPSS: ${c.epss}</span>
+            <div class="ws-row ${sevClass}" style="border-bottom:1px solid rgba(255,255,255,0.04); padding:0.45rem 0;">
+              <span style="font-weight:700;">${c.id}</span>
+              <span>[${c.cvss} ${c.sev}] · ${c.eco}</span>
+              <span style="color:#e2e8f0;">${c.sub}</span>
+              <span style="text-align:right; color:var(--text-muted);">EPSS: ${c.epss}</span>
             </div>
           `;
         }).join('');
       }
 
-      renderList('');
-      const input = document.getElementById('cve-search');
-      if (input) {
-        input.addEventListener('input', (e) => renderList(e.target.value));
-        input.focus();
+      renderRows();
+
+      const filterBtns = bodyEl.querySelectorAll('.cve-filter-btn');
+      filterBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+          filterBtns.forEach(b => {
+            b.classList.remove('btn--primary');
+            b.classList.add('btn--ghost');
+          });
+          btn.classList.add('btn--primary');
+          btn.classList.remove('btn--ghost');
+          selectedEco = btn.getAttribute('data-eco');
+          renderRows();
+        });
+      });
+
+      const qInput = document.getElementById('ws-cve-query');
+      if (qInput) {
+        qInput.addEventListener('input', (e) => {
+          searchQuery = e.target.value.toLowerCase().trim();
+          renderRows();
+        });
       }
+
       return () => {};
     }
 
-    /* --- Demo 2: packetveil --- */
-    function renderPacketveilDemo(titleEl, bodyEl) {
-      titleEl.textContent = 'PACKETVEIL // L4/L7 STATEFUL INSPECTION & FLOW MONITOR';
+    /* ======================================================================
+       02: PACKETVEIL WORKSTATION (eBPF & Firewall Engine)
+       ====================================================================== */
+    function renderPacketveilWorkstation(titleEl, tagEl, bodyEl) {
+      titleEl.textContent = 'PACKETVEIL // L4/L7 STATEFUL INSPECTION & ANTI-SYN SHIELD';
+      if (tagEl) tagEl.textContent = 'FAST-PATH · 0 B/OP · 94.9 NS/FLOW';
+
       bodyEl.innerHTML = `
-        <div class="sb-layout">
-          <div class="sb-toolbar">
-            <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
-              <button type="button" class="btn btn--secondary btn--sm" id="pv-syn-flood">⚡ Trigger SYN Flood (100k/s)</button>
-              <button type="button" class="btn btn--secondary btn--sm" id="pv-inject-drop">🛡️ Inject Port 23 Malicious Packet</button>
-              <button type="button" class="btn btn--secondary btn--sm" id="pv-reset">🔄 Reset Table</button>
-            </div>
-            <div class="mono" style="font-size: 0.72rem; color: #38bdf8;">
-              Fast-path: 0 B/op · 94.9 ns/flow
-            </div>
+        <div class="ws-view ws-view--sim is-active" data-view="sim">
+          <div class="ws-hud">
+            <div class="ws-hud__item"><span class="ws-hud__label">Conntrack Flows</span><span class="ws-hud__val" id="pv-flows">48</span></div>
+            <div class="ws-hud__item"><span class="ws-hud__label">Ingress Throughput</span><span class="ws-hud__val" style="color:#38bdf8;" id="pv-ingress">1.4 Mpps</span></div>
+            <div class="ws-hud__item"><span class="ws-hud__label">L4 Passed</span><span class="ws-hud__val" style="color:#4ade80;" id="pv-passed">2,840</span></div>
+            <div class="ws-hud__item"><span class="ws-hud__label">ACL Dropped</span><span class="ws-hud__val" style="color:#f87171;" id="pv-dropped">14</span></div>
+            <div class="ws-hud__item"><span class="ws-hud__label">Anti-SYN Tarpitted</span><span class="ws-hud__val" style="color:#fbbf24;" id="pv-tarpit">0</span></div>
           </div>
-          <div class="sb-metric-strip">
-            <div class="sb-metric-box"><div class="sb-metric-box__label">Active Flows</div><div class="sb-metric-box__val" id="pv-flows">48</div></div>
-            <div class="sb-metric-box"><div class="sb-metric-box__label">Passed (L4)</div><div class="sb-metric-box__val" style="color:#4ade80;" id="pv-passed">1,420</div></div>
-            <div class="sb-metric-box"><div class="sb-metric-box__label">Dropped (ACL)</div><div class="sb-metric-box__val" style="color:#f87171;" id="pv-dropped">12</div></div>
-            <div class="sb-metric-box"><div class="sb-metric-box__label">Tarpitted (SYN)</div><div class="sb-metric-box__val" style="color:#fbbf24;" id="pv-tarpit">0</div></div>
+
+          <!-- Dynamic 60 FPS Network Pipeline Canvas -->
+          <div class="ws-canvas-wrap">
+            <canvas id="pv-canvas" class="ws-canvas"></canvas>
+            <div class="ws-canvas-badge mono">eBPF TC PIPELINE: 60 FPS</div>
           </div>
-          <div class="sb-terminal" id="pv-log"></div>
+
+          <div class="ws-split">
+            <div class="ws-deck">
+              <div class="ws-deck__title">Traffic Injection Deck</div>
+              <div class="ws-deck__btn-group">
+                <button type="button" class="btn btn--sm btn--secondary" id="pv-btn-flood">⚡ Volumetric SYN Flood (50k PPS)</button>
+                <button type="button" class="btn btn--sm btn--secondary" id="pv-btn-drop">🛡️ Inject Port 23 Malicious Probe</button>
+                <button type="button" class="btn btn--sm btn--secondary" id="pv-btn-smb">🚫 Drop Port 445 SMB Attack</button>
+                <button type="button" class="btn btn--sm btn--ghost" id="pv-btn-flush">🔄 Flush Conntrack Table</button>
+              </div>
+            </div>
+
+            <div class="ws-terminal" id="pv-terminal" style="max-height: 280px;"></div>
+          </div>
+        </div>
+
+        <div class="ws-view ws-view--rfc" data-view="rfc">
+          <div class="ws-terminal" style="height: 100%; white-space: pre; font-size: 0.72rem; line-height: 1.5;">
++--------------------------------------------------------------------------------------------------+
+|                               PACKETVEIL CONNTRACK &amp; FILTER PIPELINE                             |
++--------------------------------------------------------------------------------------------------+
+
+   [ NIC Ingress Ring Buffer (eBPF XDP Driver Mode) ]
+                           |
+                           v
+            ( Sliding-Window Anti-SYN Shield )
+                    /               \
+         [ SYN Rate > Threshold ]   [ Normal Rate ]
+                    |                       |
+            [ ACTION: TARPIT ]              v
+                                  ( 4-Tuple Hash Table Lookup )
+                                          /               \
+                                 [ Flow Exists ]     [ Flow Missing / SYN ]
+                                         |                    |
+                                 [ State: ESTAB ]      ( ACL Rule Evaluator )
+                                         |                 /          \
+                                 ( Zero-Alloc PASS )  [ PASS ]      [ DROP ]
+          </div>
+        </div>
+
+        <div class="ws-view ws-view--bench" data-view="bench">
+          <div class="ws-terminal" style="height: 100%; line-height: 1.6; font-size: 0.75rem;">
+=== PACKETVEIL KERNEL BENCHMARKS (AMD Ryzen 9 6900HX - Linux 6.x) ===
+
+BenchmarkInspect_EstablishedFlow-16:
+  - Iterations:  12,906,974 ops
+  - Speed:       94.99 ns/op
+  - Memory:      0 B/op (Zero Heap Allocations on Fast-Path)
+  - Allocs:      0 allocs/op
+
+Concurrency &amp; Race Detector:
+  - Multi-threaded worker test: 32 concurrent goroutines flooding 500,000 packets
+  - Command: go test -v -race ./pkg/filter
+  - Result:  PASS (0 data races, 0 memory corruption)
+          </div>
         </div>
       `;
 
-      let passed = 1420, dropped = 12, tarpit = 0, flows = 48;
-      const logEl = document.getElementById('pv-log');
+      // Canvas 60 FPS Particle Visualizer
+      const canvas = document.getElementById('pv-canvas');
+      let animId = null;
+      let packets = [];
+      let passed = 2840, dropped = 14, tarpit = 0, flows = 48;
 
-      function addLog(action, src, dst, proto, reason) {
-        if (!logEl) return;
-        const color = action === 'PASS' ? 'sb-ok' : (action === 'DROP' ? 'sb-crit' : 'sb-warn');
-        const div = document.createElement('div');
-        div.className = `sb-row ${color}`;
-        div.innerHTML = `
-          <span style="width: 70px;">[${action}]</span>
-          <span style="width: 220px;">${src} -> ${dst}</span>
-          <span style="width: 80px;">${proto}</span>
-          <span style="flex: 1;">${reason}</span>
-          <span style="color: var(--text-muted);">${new Date().toISOString().substring(11, 19)}</span>
-        `;
-        logEl.prepend(div);
-        if (logEl.children.length > 50) logEl.removeChild(logEl.lastChild);
+      if (canvas) {
+        const ctx = canvas.getContext('2d');
+        const resizeCanvas = () => {
+          canvas.width = canvas.parentElement.clientWidth;
+          canvas.height = canvas.parentElement.clientHeight;
+        };
+        resizeCanvas();
+
+        function addParticle(type) {
+          packets.push({
+            x: 20,
+            y: canvas.height * 0.5 + (Math.random() * 40 - 20),
+            vx: 4 + Math.random() * 3,
+            type: type, // 'ok', 'drop', 'tarpit'
+            life: 1.0
+          });
+        }
+
+        function drawPipeline() {
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+          const w = canvas.width;
+          const h = canvas.height;
+
+          // Draw pipeline stages
+          const stages = [
+            { label: 'INGRESS ETH0', x: w * 0.12 },
+            { label: 'SYN SHIELD', x: w * 0.35 },
+            { label: 'CONNTRACK TABLE', x: w * 0.62 },
+            { label: 'DECISION / EGRESS', x: w * 0.88 }
+          ];
+
+          stages.forEach((st, idx) => {
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.04)';
+            ctx.strokeStyle = 'rgba(255, 255, 255, 0.12)';
+            ctx.strokeRect(st.x - 55, h * 0.25, 110, h * 0.5);
+            ctx.fillRect(st.x - 55, h * 0.25, 110, h * 0.5);
+
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.6)';
+            ctx.font = '10px monospace';
+            ctx.textAlign = 'center';
+            ctx.fillText(st.label, st.x, h * 0.2);
+
+            if (idx < stages.length - 1) {
+              ctx.strokeStyle = 'rgba(56, 189, 248, 0.2)';
+              ctx.beginPath();
+              ctx.moveTo(st.x + 55, h * 0.5);
+              ctx.lineTo(stages[idx + 1].x - 55, h * 0.5);
+              ctx.stroke();
+            }
+          });
+
+          // Animate packets
+          for (let i = packets.length - 1; i >= 0; i--) {
+            const p = packets[i];
+            p.x += p.vx;
+            ctx.beginPath();
+            ctx.arc(p.x, p.y, p.type === 'drop' ? 4 : 3, 0, Math.PI * 2);
+            ctx.fillStyle = p.type === 'ok' ? '#4ade80' : (p.type === 'drop' ? '#f87171' : '#fbbf24');
+            ctx.shadowColor = ctx.fillStyle;
+            ctx.shadowBlur = 8;
+            ctx.fill();
+            ctx.shadowBlur = 0;
+
+            if (p.x > w - 40) packets.splice(i, 1);
+          }
+
+          animId = requestAnimationFrame(drawPipeline);
+        }
+        drawPipeline();
       }
 
-      const interval = setInterval(() => {
-        passed += Math.floor(Math.random() * 4) + 1;
-        flows = Math.min(256, Math.max(30, flows + (Math.random() > 0.5 ? 1 : -1)));
-        const pEl = document.getElementById('pv-passed');
-        const fEl = document.getElementById('pv-flows');
-        if (pEl) pEl.textContent = passed.toLocaleString();
-        if (fEl) fEl.textContent = flows.toLocaleString();
+      const term = document.getElementById('pv-terminal');
+      function logPacket(action, flow, proto, reason) {
+        if (!term) return;
+        const color = action === 'PASS' ? 'ws-badge-ok' : (action === 'DROP' ? 'ws-badge-crit' : 'ws-badge-warn');
+        const row = document.createElement('div');
+        row.className = `ws-row ${color}`;
+        row.innerHTML = `
+          <span>[${action}]</span>
+          <span>${flow}</span>
+          <span>${proto} · ${reason}</span>
+          <span style="text-align:right; color:var(--text-muted);">${new Date().toISOString().substring(14, 21)}</span>
+        `;
+        term.prepend(row);
+        if (term.children.length > 50) term.removeChild(term.lastChild);
+      }
 
+      const ticker = setInterval(() => {
+        passed += Math.floor(Math.random() * 5) + 1;
+        flows = Math.min(128, Math.max(30, flows + (Math.random() > 0.5 ? 1 : -1)));
+        document.getElementById('pv-passed').textContent = passed.toLocaleString();
+        document.getElementById('pv-flows').textContent = flows.toLocaleString();
+        packets.push({ x: 20, y: 110 + (Math.random() * 30 - 15), vx: 5, type: 'ok', life: 1 });
         if (Math.random() < 0.25) {
           const clientPort = 40000 + Math.floor(Math.random() * 20000);
-          addLog('PASS', `10.8.0.4:${clientPort}`, '1.1.1.1:443', 'TCP/TLS', 'conntrack: established');
+          logPacket('PASS', `10.8.0.4:${clientPort}`, 'TCP 443', 'conntrack: established flow');
         }
-      }, 400);
+      }, 350);
 
-      const synBtn = document.getElementById('pv-syn-flood');
-      if (synBtn) {
-        synBtn.addEventListener('click', () => {
-          tarpit += 140;
-          document.getElementById('pv-tarpit').textContent = tarpit.toLocaleString();
-          for (let i = 0; i < 4; i++) {
-            addLog('TARPIT', '198.51.100.82:SYN', '10.0.0.1:443', 'TCP/SYN', 'anti-syn-flood: threshold exceeded');
-          }
-        });
-      }
+      document.getElementById('pv-btn-flood')?.addEventListener('click', () => {
+        tarpit += 250;
+        document.getElementById('pv-tarpit').textContent = tarpit.toLocaleString();
+        for (let i = 0; i < 8; i++) {
+          packets.push({ x: 20, y: 110 + (Math.random() * 40 - 20), vx: 7, type: 'tarpit', life: 1 });
+          logPacket('TARPIT', '198.51.100.82:SYN', 'TCP/SYN', 'anti-syn-flood: threshold exceeded');
+        }
+      });
 
-      const dropBtn = document.getElementById('pv-inject-drop');
-      if (dropBtn) {
-        dropBtn.addEventListener('click', () => {
-          dropped += 1;
-          document.getElementById('pv-dropped').textContent = dropped.toLocaleString();
-          addLog('DROP', '192.168.1.105:51234', '10.0.0.5:23', 'TCP/TELNET', 'RULE_DROP_TELNET (Port 23 prohibited)');
-        });
-      }
+      document.getElementById('pv-btn-drop')?.addEventListener('click', () => {
+        dropped += 1;
+        document.getElementById('pv-dropped').textContent = dropped.toLocaleString();
+        packets.push({ x: 20, y: 110, vx: 5, type: 'drop', life: 1 });
+        logPacket('DROP', '192.168.1.105:51234', 'TCP 23', 'RULE_DROP_TELNET (Port 23 prohibited)');
+      });
 
-      const resetBtn = document.getElementById('pv-reset');
-      if (resetBtn) {
-        resetBtn.addEventListener('click', () => {
-          passed = 0; dropped = 0; tarpit = 0; flows = 1;
-          document.getElementById('pv-passed').textContent = '0';
-          document.getElementById('pv-dropped').textContent = '0';
-          document.getElementById('pv-tarpit').textContent = '0';
-          document.getElementById('pv-flows').textContent = '1';
-          if (logEl) logEl.innerHTML = '';
-          addLog('PASS', '0.0.0.0', '0.0.0.0', 'STATE', 'conntrack table flushed');
-        });
-      }
+      document.getElementById('pv-btn-smb')?.addEventListener('click', () => {
+        dropped += 1;
+        document.getElementById('pv-dropped').textContent = dropped.toLocaleString();
+        packets.push({ x: 20, y: 110, vx: 5, type: 'drop', life: 1 });
+        logPacket('DROP', '192.168.1.112:49821', 'TCP 445', 'RULE_DROP_SMB (Port 445 blocked)');
+      });
 
-      return () => clearInterval(interval);
+      document.getElementById('pv-btn-flush')?.addEventListener('click', () => {
+        flows = 1;
+        document.getElementById('pv-flows').textContent = '1';
+        logPacket('PASS', '0.0.0.0', 'STATE', 'conntrack table flushed');
+      });
+
+      return () => {
+        if (animId) cancelAnimationFrame(animId);
+        clearInterval(ticker);
+      };
     }
 
-    /* --- Demo 3: ringlimit --- */
-    function renderRinglimitDemo(titleEl, bodyEl) {
+    /* ======================================================================
+       03: RINGLIMIT WORKSTATION (Lock-Free Rate Limiter)
+       ====================================================================== */
+    function renderRinglimitWorkstation(titleEl, tagEl, bodyEl) {
       titleEl.textContent = 'RINGLIMIT // LOCK-FREE TOKEN BUCKET & BACKPRESSURE SHAPER';
+      if (tagEl) tagEl.textContent = '32.8M OPS/S · 0 B/OP · SMP CACHE-LINE ALIGNED';
+
       bodyEl.innerHTML = `
-        <div class="sb-layout">
-          <div class="sb-toolbar">
-            <div class="sb-slider-wrap">
-              <span class="mono" style="font-size: 0.72rem; min-width: 140px;">Rate: <b id="rl-rate-label" style="color:var(--accent-1);">1,000,000 /s</b></span>
-              <input type="range" id="rl-rate-slider" min="100000" max="10000000" step="100000" value="1000000">
-            </div>
-            <div class="mono" style="font-size: 0.72rem; color: #4ade80;">
-              Zero-Alloc Atomic CAS · 33.6 ns/op
-            </div>
+        <div class="ws-view ws-view--sim is-active" data-view="sim">
+          <div class="ws-hud">
+            <div class="ws-hud__item"><span class="ws-hud__label">Tokens Available</span><span class="ws-hud__val" id="rl-tokens">500,000</span></div>
+            <div class="ws-hud__item"><span class="ws-hud__label">Evaluation Rate</span><span class="ws-hud__val" style="color:#38bdf8;" id="rl-rate-val">1,000,000 /s</span></div>
+            <div class="ws-hud__item"><span class="ws-hud__label">Passed Reqs</span><span class="ws-hud__val" style="color:#4ade80;" id="rl-passed">0</span></div>
+            <div class="ws-hud__item"><span class="ws-hud__label">Throttled (429)</span><span class="ws-hud__val" style="color:#f87171;" id="rl-throttled">0</span></div>
+            <div class="ws-hud__item"><span class="ws-hud__label">Heap Allocation</span><span class="ws-hud__val" style="color:#a78bfa;">0 B / op</span></div>
           </div>
-          <div class="sb-metric-strip">
-            <div class="sb-metric-box"><div class="sb-metric-box__label">Tokens Available</div><div class="sb-metric-box__val" id="rl-tokens">500,000</div></div>
-            <div class="sb-metric-box"><div class="sb-metric-box__label">Passed Reqs</div><div class="sb-metric-box__val" style="color:#4ade80;" id="rl-passed">0</div></div>
-            <div class="sb-metric-box"><div class="sb-metric-box__label">Throttled (429)</div><div class="sb-metric-box__val" style="color:#f87171;" id="rl-throttled">0</div></div>
-            <div class="sb-metric-box"><div class="sb-metric-box__label">Allocations</div><div class="sb-metric-box__val" style="color:#38bdf8;">0 B / op</div></div>
+
+          <!-- Live Oscilloscope Canvas -->
+          <div class="ws-canvas-wrap">
+            <canvas id="rl-canvas" class="ws-canvas"></canvas>
+            <div class="ws-canvas-badge mono">TOKEN BUCKET OSCILLOSCOPE (60 FPS)</div>
           </div>
-          <div class="sb-terminal" id="rl-terminal" style="font-family: var(--font-mono); font-size: 0.75rem;"></div>
+
+          <div class="ws-split">
+            <div class="ws-deck">
+              <div class="ws-deck__title">Concurrency Shaper Controls</div>
+              <div style="display:flex; flex-direction:column; gap:0.75rem;">
+                <div class="mono" style="font-size:0.72rem; color:var(--text-muted);">
+                  Refill Rate: <b id="rl-slider-label" style="color:#38bdf8;">1,000,000 /s</b>
+                </div>
+                <input type="range" id="rl-slider" min="100000" max="10000000" step="100000" value="1000000" style="width:100%; accent-color:#38bdf8;">
+              </div>
+
+              <div class="ws-deck__title" style="margin-top:0.5rem;">SMP Cache-Line Alignment</div>
+              <div class="mono" style="font-size:0.7rem; color:var(--text-muted); line-height:1.5;">
+                • Line 0 (64B): tokens: atomic.Int64 + 56B Pad<br>
+                • Line 1 (64B): lastUpdate: atomic.Int64 + 56B Pad<br>
+                Result: Zero L1 cache invalidations across CPU cores
+              </div>
+            </div>
+
+            <div class="ws-terminal" id="rl-terminal" style="max-height: 280px;"></div>
+          </div>
+        </div>
+
+        <div class="ws-view ws-view--rfc" data-view="rfc">
+          <div class="ws-terminal" style="height: 100%; white-space: pre; font-size: 0.72rem; line-height: 1.5;">
++--------------------------------------------------------------------------------------------------+
+|                             RINGLIMIT CACHE-LINE MEMORY LAYOUT                                   |
++--------------------------------------------------------------------------------------------------+
+
+  L1 Data Cache Boundary (64 Bytes per Line on x86_64 / ARM64):
+
+  Line 0: [ tokens: atomic.Int64 (8B) ] [ pad: [56]byte (56B) ]  <--- Core 0 Access
+  ----------------------------------------------------------------------------------
+  Line 1: [ lastUpdate: atomic.Int64 (8B) ] [ pad: [56]byte (56B) ] <--- Core 1 Access
+
+  Lock-Free CAS Loop:
+    1. Read tokens & lastUpdate via atomic.Load()
+    2. Compute nanosecond delta: refill = (elapsed * rate) / 1e9
+    3. Calculate newTokens = min(burst, tokens + refill) - requested
+    4. atomic.CompareAndSwap(tokens, old, new) -> On failure, retry without thread sleep.
+          </div>
+        </div>
+
+        <div class="ws-view ws-view--bench" data-view="bench">
+          <div class="ws-terminal" style="height: 100%; line-height: 1.6; font-size: 0.75rem;">
+=== RINGLIMIT BENCHMARK SUITE (AMD Ryzen 9 6900HX - Linux 6.x) ===
+
+BenchmarkLimiter_Allow-16:
+  - Total Runs:  26,806,790 ops
+  - Speed:       44.48 ns/op
+  - Memory:      0 B/op
+  - Allocs:      0 allocs/op
+
+BenchmarkLimiter_AllowParallel-16 (Contended SMP Multi-threading):
+  - Total Runs:  32,820,567 ops (32.8M operations/second)
+  - Speed:       33.65 ns/op
+  - Memory:      0 B/op
+  - Allocs:      0 allocs/op
+
+1-Second Stress Evaluation Test:
+  - Total Evaluated: 49,232,459 requests
+  - Throughput:      49.23 Mreq/sec
+          </div>
         </div>
       `;
 
       let tokens = 500000, passed = 0, throttled = 0, rate = 1000000;
-      const termEl = document.getElementById('rl-terminal');
-      const rateSlider = document.getElementById('rl-rate-slider');
-      const rateLabel = document.getElementById('rl-rate-label');
+      let waveData = new Array(120).fill(50);
+      let animId = null;
 
-      if (rateSlider) {
-        rateSlider.addEventListener('input', (e) => {
+      const canvas = document.getElementById('rl-canvas');
+      if (canvas) {
+        const ctx = canvas.getContext('2d');
+        const resizeCanvas = () => {
+          canvas.width = canvas.parentElement.clientWidth;
+          canvas.height = canvas.parentElement.clientHeight;
+        };
+        resizeCanvas();
+
+        function drawScope() {
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+          const w = canvas.width;
+          const h = canvas.height;
+
+          // Grid lines
+          ctx.strokeStyle = 'rgba(255, 255, 255, 0.04)';
+          ctx.beginPath();
+          for (let y = 0; y < h; y += 30) {
+            ctx.moveTo(0, y); ctx.lineTo(w, y);
+          }
+          ctx.stroke();
+
+          // Waveform
+          ctx.strokeStyle = '#38bdf8';
+          ctx.lineWidth = 2;
+          ctx.beginPath();
+          const step = w / (waveData.length - 1);
+          waveData.forEach((val, i) => {
+            const y = h - (val / 100) * (h * 0.8) - 15;
+            if (i === 0) ctx.moveTo(0, y);
+            else ctx.lineTo(i * step, y);
+          });
+          ctx.stroke();
+
+          animId = requestAnimationFrame(drawScope);
+        }
+        drawScope();
+      }
+
+      const term = document.getElementById('rl-terminal');
+      const slider = document.getElementById('rl-slider');
+      const sliderLabel = document.getElementById('rl-slider-label');
+      const rateVal = document.getElementById('rl-rate-val');
+
+      if (slider) {
+        slider.addEventListener('input', (e) => {
           rate = parseInt(e.target.value, 10);
-          if (rateLabel) rateLabel.textContent = rate.toLocaleString() + ' /s';
+          if (sliderLabel) sliderLabel.textContent = rate.toLocaleString() + ' /s';
+          if (rateVal) rateVal.textContent = rate.toLocaleString() + ' /s';
         });
       }
 
       const interval = setInterval(() => {
-        // Refill tokens
         tokens = Math.min(500000, tokens + Math.floor(rate / 10));
-        // Simulate high traffic burst
         const incoming = Math.floor(Math.random() * (rate / 8));
         let allowed = 0, denied = 0;
 
@@ -1149,149 +1521,301 @@
         passed += allowed;
         throttled += denied;
 
-        const tokEl = document.getElementById('rl-tokens');
-        const passEl = document.getElementById('rl-passed');
-        const throtEl = document.getElementById('rl-throttled');
-        if (tokEl) tokEl.textContent = tokens.toLocaleString();
-        if (passEl) passEl.textContent = passed.toLocaleString();
-        if (throtEl) throtEl.textContent = throttled.toLocaleString();
+        document.getElementById('rl-tokens').textContent = tokens.toLocaleString();
+        document.getElementById('rl-passed').textContent = passed.toLocaleString();
+        document.getElementById('rl-throttled').textContent = throttled.toLocaleString();
 
-        if (termEl) {
-          const div = document.createElement('div');
-          div.className = denied > 0 ? 'sb-row sb-warn' : 'sb-row sb-ok';
-          div.innerHTML = `
-            <span style="width: 100px;">${new Date().toISOString().substring(14, 21)}</span>
-            <span style="width: 140px;">IN: ${incoming.toLocaleString()} reqs</span>
-            <span style="width: 140px;">ALLOW: ${allowed.toLocaleString()}</span>
-            <span style="width: 140px; color:${denied > 0 ? '#f87171' : 'var(--text-muted)'};">DROP: ${denied.toLocaleString()}</span>
-            <span style="flex:1;">BUCKET: ${(tokens / 5000).toFixed(1)}% full</span>
+        // Push wave
+        waveData.shift();
+        waveData.push((tokens / 5000));
+
+        if (term) {
+          const row = document.createElement('div');
+          row.className = `ws-row ${denied > 0 ? 'ws-badge-warn' : 'ws-badge-ok'}`;
+          row.innerHTML = `
+            <span>${new Date().toISOString().substring(14, 21)}</span>
+            <span>IN: ${incoming.toLocaleString()}</span>
+            <span>ALLOW: ${allowed.toLocaleString()} · DROP: ${denied.toLocaleString()}</span>
+            <span style="text-align:right;">${(tokens / 5000).toFixed(0)}% TOKENS</span>
           `;
-          termEl.prepend(div);
-          if (termEl.children.length > 40) termEl.removeChild(termEl.lastChild);
+          term.prepend(row);
+          if (term.children.length > 40) term.removeChild(term.lastChild);
         }
       }, 100);
 
-      return () => clearInterval(interval);
+      return () => {
+        if (animId) cancelAnimationFrame(animId);
+        clearInterval(interval);
+      };
     }
 
-    /* --- Demo 4: walkv --- */
-    function renderWalkvDemo(titleEl, bodyEl) {
+    /* ======================================================================
+       04: WALKV WORKSTATION (Storage Engine & Crash Recovery)
+       ====================================================================== */
+    function renderWalkvWorkstation(titleEl, tagEl, bodyEl) {
       titleEl.textContent = 'WALKV // WRITE-AHEAD LOG & MEMTABLE CRASH RECOVERY';
+      if (tagEl) tagEl.textContent = 'POSIX O_APPEND · CRC32 CASTAGNOLI · ZERO-LOSS REPLAY';
+
       bodyEl.innerHTML = `
-        <div class="sb-layout">
-          <div class="sb-toolbar">
-            <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
-              <button type="button" class="btn btn--primary btn--sm" id="wv-put">📝 Append 10 Keys to WAL</button>
-              <button type="button" class="btn btn--secondary btn--sm" id="wv-crash" style="border-color:#f87171; color:#f87171;">💥 Simulate Power Outage (Corrupt Tail)</button>
-              <button type="button" class="btn btn--secondary btn--sm" id="wv-recover">🔄 Replay & Recover</button>
-            </div>
-            <div class="mono" style="font-size: 0.72rem; color: #fbbf24;">
-              Binary Frame: 11B Header + CRC32 Castagnoli
-            </div>
+        <div class="ws-view ws-view--sim is-active" data-view="sim">
+          <div class="ws-hud">
+            <div class="ws-hud__item"><span class="ws-hud__label">Active MemTable Keys</span><span class="ws-hud__val" style="color:#4ade80;" id="wv-keys">10</span></div>
+            <div class="ws-hud__item"><span class="ws-hud__label">WAL Size on Disk</span><span class="ws-hud__val" id="wv-disk">1.42 KB</span></div>
+            <div class="ws-hud__item"><span class="ws-hud__label">Tail Integrity</span><span class="ws-hud__val" style="color:#38bdf8;" id="wv-crc">PASS (100%)</span></div>
+            <div class="ws-hud__item"><span class="ws-hud__label">Recovery Latency</span><span class="ws-hud__val" style="color:#a78bfa;" id="wv-replay">&lt; 0.4 ms</span></div>
+            <div class="ws-hud__item"><span class="ws-hud__label">Fsync Policy</span><span class="ws-hud__val" style="color:#fbbf24; font-size:0.95rem;">SyncPeriodic</span></div>
           </div>
-          <div class="sb-metric-strip">
-            <div class="sb-metric-box"><div class="sb-metric-box__label">WAL Size on Disk</div><div class="sb-metric-box__val" id="wv-disk">1.4 KB</div></div>
-            <div class="sb-metric-box"><div class="sb-metric-box__label">MemTable Keys</div><div class="sb-metric-box__val" style="color:#4ade80;" id="wv-keys">10</div></div>
-            <div class="sb-metric-box"><div class="sb-metric-box__label">CRC Verification</div><div class="sb-metric-box__val" style="color:#38bdf8;" id="wv-crc">PASS (100%)</div></div>
-            <div class="sb-metric-box"><div class="sb-metric-box__label">Replay Latency</div><div class="sb-metric-box__val" style="color:#a78bfa;" id="wv-replay">< 1 ms</div></div>
+
+          <!-- Color-Coded Hex Dump Matrix -->
+          <div style="background:#030508; border:1px solid rgba(255,255,255,0.08); border-radius:8px; padding:0.85rem;">
+            <div style="display:flex; justify-content:space-between; margin-bottom:0.5rem;" class="mono">
+              <span style="font-size:0.7rem; color:var(--text-muted);">ACTIVE WAL BINARY FRAME INSPECTOR (11-BYTE HEADER + PAYLOAD)</span>
+              <span style="font-size:0.7rem; color:#38bdf8;">[CRC32: 4B] [OP: 1B] [KEYLEN: 2B] [VALLEN: 4B]</span>
+            </div>
+            <div class="ws-hex-grid" id="wv-hex-dump"></div>
           </div>
-          <div class="sb-terminal" id="wv-log"></div>
+
+          <div class="ws-split">
+            <div class="ws-deck">
+              <div class="ws-deck__title">Crash Simulation Actions</div>
+              <div class="ws-deck__btn-group">
+                <button type="button" class="btn btn--sm btn--primary" id="wv-btn-put">📝 Append 10 Key-Value Writes</button>
+                <button type="button" class="btn btn--sm btn--secondary" id="wv-btn-crash" style="border-color:#f87171; color:#f87171;">💥 Simulate Power Outage (Torn Tail)</button>
+                <button type="button" class="btn btn--sm btn--secondary" id="wv-btn-recover">🔄 Replay &amp; Zero-Loss Recover</button>
+              </div>
+            </div>
+
+            <div class="ws-terminal" id="wv-terminal" style="max-height: 240px;"></div>
+          </div>
+        </div>
+
+        <div class="ws-view ws-view--rfc" data-view="rfc">
+          <div class="ws-terminal" style="height: 100%; white-space: pre; font-size: 0.72rem; line-height: 1.5;">
++--------------------------------------------------------------------------------------------------+
+|                                    WALKV BINARY RECORD FORMAT                                    |
++--------------------------------------------------------------------------------------------------+
+
+  +-------------------+-----------------+-------------------+-------------------+
+  |  CRC32 (4 Bytes)  | OpType (1 Byte) | KeyLen (2 Bytes)  | ValLen (4 Bytes)  |
+  +-------------------+-----------------+-------------------+-------------------+
+  |                         Key Bytes [0 .. KeyLen]                                 |
+  +---------------------------------------------------------------------------------+
+  |                        Value Bytes [0 .. ValLen]                                |
+  +---------------------------------------------------------------------------------+
+
+  Crash Recovery &amp; Torn Write Handling:
+    1. During startup, Recover() reads record headers via io.ReadFull().
+    2. If power was lost during mid-write, unexpected EOF is encountered on incomplete header.
+    3. walkv cleanly truncates the torn tail byte sequence without failing the database.
+    4. Valid mutations are restored to the in-memory MemTable in under 1 millisecond.
+          </div>
+        </div>
+
+        <div class="ws-view ws-view--bench" data-view="bench">
+          <div class="ws-terminal" style="height: 100%; line-height: 1.6; font-size: 0.75rem;">
+=== WALKV STORAGE ENGINE BENCHMARKS (AMD Ryzen 9 6900HX - Linux 6.x) ===
+
+BenchmarkWAL_Put_Async-16:
+  - Iterations:  7,278,229 writes
+  - Speed:       156.3 ns/op
+  - Memory:      184 B/op (3 allocs/op)
+  - Throughput:  6.4 Million writes/second
+
+BenchmarkMemTable_Get-16:
+  - Iterations:  43,559,262 reads
+  - Speed:       24.55 ns/op
+  - Memory:      16 B/op (1 alloc/op)
+  - Throughput:  40.7 Million reads/second
+
+Crash Resilience Test:
+  - 100 keys written, 7 corrupt trailing bytes injected -> 100% recovered cleanly.
+          </div>
         </div>
       `;
 
       let keyCount = 10, walBytes = 1420;
-      const logEl = document.getElementById('wv-log');
+      const hexEl = document.getElementById('wv-hex-dump');
+      const term = document.getElementById('wv-terminal');
 
-      function appendLog(text, cls = 'sb-info') {
-        if (!logEl) return;
-        const div = document.createElement('div');
-        div.className = `sb-row ${cls}`;
-        div.innerHTML = `<span style="flex:1;">${text}</span><span style="color:var(--text-muted);">${new Date().toISOString().substring(11, 19)}</span>`;
-        logEl.prepend(div);
+      function renderHex(corrupt = false) {
+        if (!hexEl) return;
+        const bytes = [
+          { b: '7F', c: 'is-crc' }, { b: '3A', c: 'is-crc' }, { b: '12', c: 'is-crc' }, { b: '90', c: 'is-crc' },
+          { b: '01', c: 'is-op' },  { b: '00', c: '' },       { b: '06', c: '' },       { b: '00', c: '' },
+          { b: '00', c: '' },       { b: '00', c: '' },       { b: '0E', c: '' },       { b: '64', c: '' },
+          { b: '65', c: '' },       { b: '76', c: '' },       { b: '69', c: '' },       { b: '63', c: '' }
+        ];
+
+        if (corrupt) {
+          bytes.push({ b: 'DE', c: 'is-corrupt' });
+          bytes.push({ b: 'AD', c: 'is-corrupt' });
+          bytes.push({ b: 'BE', c: 'is-corrupt' });
+          bytes.push({ b: 'EF', c: 'is-corrupt' });
+        }
+
+        hexEl.innerHTML = bytes.map(item => `
+          <div class="ws-hex-byte ${item.c}">${item.b}</div>
+        `).join('');
       }
 
-      appendLog('WAL initialized: /data/wal.log opened with O_APPEND | O_CREATE', 'sb-ok');
-      appendLog('MemTable warm: 10 keys indexed from existing transaction records', 'sb-info');
+      renderHex(false);
 
-      document.getElementById('wv-put')?.addEventListener('click', () => {
+      function logWAL(text, cls = 'ws-badge-info') {
+        if (!term) return;
+        const row = document.createElement('div');
+        row.className = `ws-row ${cls}`;
+        row.style.gridTemplateColumns = '1fr 90px';
+        row.innerHTML = `<span>${text}</span><span style="text-align:right; color:var(--text-muted);">${new Date().toISOString().substring(14, 21)}</span>`;
+        term.prepend(row);
+      }
+
+      logWAL('WAL file opened: /data/wal.log (O_APPEND | O_CREATE | O_WRONLY)', 'ws-badge-ok');
+      logWAL('MemTable synchronized: 10 transactions loaded into memory', 'ws-badge-info');
+
+      document.getElementById('wv-btn-put')?.addEventListener('click', () => {
         keyCount += 10;
         walBytes += 840;
         document.getElementById('wv-keys').textContent = keyCount;
-        document.getElementById('wv-disk').textContent = (walBytes / 1024).toFixed(1) + ' KB';
-        appendLog(`Appended 10 records [CRC32: 0x9f32e18b .. 0x3d41a021] -> fsync flushed`, 'sb-ok');
+        document.getElementById('wv-disk').textContent = (walBytes / 1024).toFixed(2) + ' KB';
+        renderHex(false);
+        logWAL(`Appended 10 records [CRC32: 0x9f32e18b .. 0x3d41a021] -> fsync flushed`, 'ws-badge-ok');
       });
 
-      document.getElementById('wv-crash')?.addEventListener('click', () => {
-        walBytes += 5;
-        document.getElementById('wv-disk').textContent = (walBytes / 1024).toFixed(1) + ' KB';
+      document.getElementById('wv-btn-crash')?.addEventListener('click', () => {
+        walBytes += 4;
+        document.getElementById('wv-disk').textContent = (walBytes / 1024).toFixed(2) + ' KB';
         document.getElementById('wv-crc').textContent = 'TAIL CORRUPTED';
         document.getElementById('wv-crc').style.color = '#f87171';
-        appendLog(`[CRASH SIMULATION] Kernel panic! Appended 5 truncated unclosed bytes [0xDE 0xAD 0xBE 0xEF 0x01] to WAL tail.`, 'sb-crit');
+        renderHex(true);
+        logWAL(`[KERNEL PANIC] Injected 4 incomplete unclosed bytes [0xDE 0xAD 0xBE 0xEF] at WAL EOF!`, 'ws-badge-crit');
       });
 
-      document.getElementById('wv-recover')?.addEventListener('click', () => {
-        const start = performance.now();
+      document.getElementById('wv-btn-recover')?.addEventListener('click', () => {
         document.getElementById('wv-crc').textContent = 'PASS (CLEANED)';
         document.getElementById('wv-crc').style.color = '#4ade80';
-        document.getElementById('wv-replay').textContent = (performance.now() - start + 0.4).toFixed(1) + ' ms';
-        appendLog(`[RECOVERY START] Scanning /data/wal.log records with CRC32...`, 'sb-info');
-        appendLog(`[TAIL ERROR] Detected partial record at byte ${walBytes - 5}: truncated header safely truncated`, 'sb-warn');
-        appendLog(`[RECOVERY COMPLETE] Successfully restored ${keyCount} keys into MemTable with ZERO data loss!`, 'sb-ok');
+        document.getElementById('wv-replay').textContent = '< 0.3 ms';
+        renderHex(false);
+        logWAL(`[REPLAY START] Scanning /data/wal.log with CRC32 Castagnoli...`, 'ws-badge-info');
+        logWAL(`[SAFE TRUNCATE] Corrupt tail bytes [0xDE 0xAD 0xBE 0xEF] cleanly truncated at offset ${walBytes - 4}`, 'ws-badge-warn');
+        logWAL(`[REPLAY FINISHED] Successfully restored ${keyCount} keys into MemTable with ZERO data loss!`, 'ws-badge-ok');
       });
 
       return () => {};
     }
 
-    /* --- Demo 5: tlsvault --- */
-    function renderTlsvaultDemo(titleEl, bodyEl) {
+    /* ======================================================================
+       05: TLSVAULT WORKSTATION (Zero-Trust TLS 1.3 Auditor)
+       ====================================================================== */
+    function renderTlsvaultWorkstation(titleEl, tagEl, bodyEl) {
       titleEl.textContent = 'TLSVAULT // ZERO-TRUST TLS 1.3 AUDITOR & CIPHER INSPECTOR';
+      if (tagEl) tagEl.textContent = 'RFC 8446 · 1-RTT ECDHE · AEAD CHACHA20 / AES-GCM';
+
       bodyEl.innerHTML = `
-        <div class="sb-layout">
-          <div class="sb-toolbar">
-            <div style="display: flex; gap: 0.5rem; flex: 1; max-width: 420px;">
-              <input type="text" id="tls-host" value="hasancicek.dev:443" 
-                style="flex: 1; background: #04060a; border: 1px solid rgba(255,255,255,0.12); padding: 0.5rem 0.75rem; border-radius: 4px; color: #fff; font-family: var(--font-mono); font-size: 0.78rem;">
-              <button type="button" class="btn btn--primary btn--sm" id="tls-audit-btn">Audit Host</button>
-            </div>
-            <div class="mono" style="font-size: 0.72rem; color: #2dd4bf;">
-              1-RTT ECDHE · ChaCha20-Poly1305 / AES-256-GCM
-            </div>
+        <div class="ws-view ws-view--sim is-active" data-view="sim">
+          <div class="ws-hud">
+            <div class="ws-hud__item"><span class="ws-hud__label">Negotiated Protocol</span><span class="ws-hud__val" style="color:#4ade80;" id="tls-ver">TLS 1.3</span></div>
+            <div class="ws-hud__item"><span class="ws-hud__label">Zero-Trust Rating</span><span class="ws-hud__val" style="color:#2dd4bf;" id="tls-rating">A+ (SECURE)</span></div>
+            <div class="ws-hud__item"><span class="ws-hud__label">ALPN Multiplex</span><span class="ws-hud__val" style="color:#fbbf24;" id="tls-alpn">h2 (HTTP/2)</span></div>
+            <div class="ws-hud__item"><span class="ws-hud__label">Handshake RTT</span><span class="ws-hud__val" style="color:#38bdf8;" id="tls-rtt">24 ms</span></div>
+            <div class="ws-hud__item"><span class="ws-hud__label">Certificate Expiry</span><span class="ws-hud__val" style="color:#a78bfa;" id="tls-cert">86 Days Valid</span></div>
           </div>
-          <div class="sb-metric-strip">
-            <div class="sb-metric-box"><div class="sb-metric-box__label">Negotiated Protocol</div><div class="sb-metric-box__val" style="color:#4ade80;" id="tls-ver">TLS 1.3</div></div>
-            <div class="sb-metric-box"><div class="sb-metric-box__label">Security Rating</div><div class="sb-metric-box__val" style="color:#2dd4bf;" id="tls-rating">A+ (SECURE)</div></div>
-            <div class="sb-metric-box"><div class="sb-metric-box__label">ALPN Multiplex</div><div class="sb-metric-box__val" style="color:#fbbf24;" id="tls-alpn">h2</div></div>
-            <div class="sb-metric-box"><div class="sb-metric-box__label">Handshake Latency</div><div class="sb-metric-box__val" style="color:#38bdf8;" id="tls-rtt">24 ms</div></div>
+
+          <div class="ws-split">
+            <div class="ws-deck">
+              <div class="ws-deck__title">Target Host Audit</div>
+              <div style="display:flex; flex-direction:column; gap:0.5rem;">
+                <input type="text" id="ws-tls-host" value="hasancicek.dev:443" 
+                  style="background:#020306; border:1px solid rgba(255,255,255,0.12); padding:0.55rem 0.75rem; border-radius:5px; color:#fff; font-family:var(--font-mono); font-size:0.75rem;">
+                <button type="button" class="btn btn--sm btn--primary" id="ws-tls-audit-btn">Audit TLS Handshake</button>
+              </div>
+
+              <div class="ws-deck__title" style="margin-top:0.5rem;">AEAD Cipher Verification</div>
+              <div class="mono" style="font-size:0.7rem; color:var(--text-muted); line-height:1.5;">
+                • Suite: TLS_AES_128_GCM_SHA256<br>
+                • KeyShare: Curve25519 (ECDHE)<br>
+                • Insecure Ciphers (CBC/RC4): BLOCKED
+              </div>
+            </div>
+
+            <!-- RFC 8446 Interactive Flight Sequence Diagram -->
+            <div class="ws-terminal" id="ws-tls-flights" style="max-height: 380px;"></div>
           </div>
-          <div class="sb-terminal" id="tls-log"></div>
+        </div>
+
+        <div class="ws-view ws-view--rfc" data-view="rfc">
+          <div class="ws-terminal" style="height: 100%; white-space: pre; font-size: 0.72rem; line-height: 1.5;">
++--------------------------------------------------------------------------------------------------+
+|                             TLS 1.3 FULL 1-RTT HANDSHAKE FLIGHT SEQUENCE                         |
++--------------------------------------------------------------------------------------------------+
+
+  Client                                              Server
+    |                                                   |
+    | ------- ClientHello (KeyShare, ALPN, SNI) ------> |  [0-RTT / Plaintext]
+    |                                                   |
+    | <------ ServerHello (KeyShare selected) --------- |  [Derive Handshake Keys]
+    | <====== {EncryptedExtensions} =================== |  [1-RTT / AEAD Encrypted]
+    | <====== {Certificate + CertVerify} ============== |
+    | <====== {Finished} ============================== |
+    |                                                   |
+    | ======> {Finished} ============================== |  [Derive Master Secret]
+    |                                                   |
+    | <=====> [Application Traffic (AES-GCM)] <=======> |  [Full Zero-Trust Secure Channel]
+          </div>
+        </div>
+
+        <div class="ws-view ws-view--bench" data-view="bench">
+          <div class="ws-terminal" style="height: 100%; line-height: 1.6; font-size: 0.75rem;">
+=== TLSVAULT AUDITOR BENCHMARKS (AMD Ryzen 9 6900HX - Linux 6.x) ===
+
+BenchmarkEvaluateCipher-16:
+  - Iterations:  2,668,800 evaluations
+  - Speed:       403.9 ns/op
+  - Rating:      Zero-Trust RFC 8446 Compliant
+
+Live Probe Verification:
+  - Remote:     hasancicek.dev:443 (104.21.94.115)
+  - Protocol:   TLS 1.3
+  - Cipher:     TLS_AES_128_GCM_SHA256
+  - ALPN:       h2
+  - Cert Days:  86 days remaining
+          </div>
         </div>
       `;
 
-      const logEl = document.getElementById('tls-log');
-      function appendLog(step, detail, cls = 'sb-info') {
-        if (!logEl) return;
-        const div = document.createElement('div');
-        div.className = `sb-row ${cls}`;
-        div.innerHTML = `<span style="width: 140px; font-weight:bold;">${step}</span><span style="flex:1;">${detail}</span>`;
-        logEl.appendChild(div);
+      const flightsEl = document.getElementById('ws-tls-flights');
+      function renderFlights(host) {
+        if (!flightsEl) return;
+        flightsEl.innerHTML = `
+          <div class="ws-flight-box">
+            <div class="ws-flight-row ws-badge-info">
+              <span>[FLIGHT 1 // 0-RTT] CLIENT -> SERVER</span>
+              <span>ClientHello [SNI: ${host}, KeyShare: Curve25519, ALPN: h2]</span>
+            </div>
+            <div class="ws-flight-row ws-badge-ok">
+              <span>[FLIGHT 2 // 1-RTT] SERVER -> CLIENT</span>
+              <span>ServerHello [KeyShare: Curve25519 matched, Cipher: TLS_AES_128_GCM_SHA256]</span>
+            </div>
+            <div class="ws-flight-row ws-badge-ok">
+              <span>[FLIGHT 3 // ENCRYPTED] SERVER -> CLIENT</span>
+              <span>{EncryptedExtensions, Certificate: ${host}, CertVerify, Finished}</span>
+            </div>
+            <div class="ws-flight-row ws-badge-info">
+              <span>[X.509 VALIDATE]</span>
+              <span>Issuer: Cloudflare / Let's Encrypt · Validity: 86 Days · Status: VERIFIED</span>
+            </div>
+            <div class="ws-flight-row ws-badge-ok" style="border-color:rgba(74,222,128,0.4); background:rgba(74,222,128,0.05);">
+              <span>[ESTABLISHED // 1-RTT] ZERO-TRUST SECURE</span>
+              <span>Full duplex AES-128-GCM channel established in 24.1 ms</span>
+            </div>
+          </div>
+        `;
       }
 
-      function runAudit(host) {
-        if (logEl) logEl.innerHTML = '';
-        appendLog('0-RTT OUTBOUND', `ClientHello [SNI: ${host}, KeyShare: X25519, ALPN: h2, CipherSuites: 3 (AEAD)]`, 'sb-info');
-        setTimeout(() => {
-          appendLog('1-RTT INBOUND', `ServerHello [Selected: TLS_AES_128_GCM_SHA256, KeyShare: X25519 matched]`, 'sb-ok');
-          appendLog('HANDSHAKE ENC', `{EncryptedExtensions, Certificate: ${host}, CertVerify, Finished}`, 'sb-ok');
-          appendLog('X.509 VALIDATE', `Issuer: Let's Encrypt / Cloudflare Inc, Valid 86 days remaining`, 'sb-info');
-          appendLog('ESTABLISHED', `Symmetric 1-RTT session established. Zero-Trust Rating: A+ (SECURE)`, 'sb-ok');
-        }, 150);
-      }
+      renderFlights('hasancicek.dev:443');
 
-      runAudit('hasancicek.dev:443');
-
-      document.getElementById('tls-audit-btn')?.addEventListener('click', () => {
-        const h = document.getElementById('tls-host')?.value || 'hasancicek.dev:443';
-        runAudit(h);
+      document.getElementById('ws-tls-audit-btn')?.addEventListener('click', () => {
+        const host = document.getElementById('ws-tls-host')?.value || 'hasancicek.dev:443';
+        renderFlights(host);
       });
 
       return () => {};

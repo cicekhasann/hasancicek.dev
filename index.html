@@ -867,22 +867,41 @@
   </footer>
 
   <!-- ====================================================================
-       INTERACTIVE SANDBOX MODAL
+       INTERACTIVE SANDBOX WORKSTATION
        ==================================================================== -->
   <div id="sandbox-modal" class="sandbox-modal" role="dialog" aria-modal="true" aria-hidden="true">
     <div class="sandbox-modal__backdrop" data-modal-close></div>
     <div class="sandbox-modal__dialog">
-      <div class="sandbox-modal__header">
-        <div class="sandbox-modal__traffic">
-          <span class="sm-dot sm-dot--red" data-modal-close></span>
-          <span class="sm-dot sm-dot--yellow"></span>
-          <span class="sm-dot sm-dot--green"></span>
+      <header class="sandbox-modal__header">
+        <div class="sandbox-modal__header-left">
+          <div class="sandbox-modal__traffic">
+            <span class="sm-dot sm-dot--red" data-modal-close title="Close"></span>
+            <span class="sm-dot sm-dot--yellow" title="Minimize"></span>
+            <span class="sm-dot sm-dot--green" title="Full Width"></span>
+          </div>
+          <div class="sandbox-modal__title-wrap">
+            <span class="sandbox-modal__title mono" id="modal-title">SYSTEM WORKSTATION</span>
+            <span class="sandbox-modal__tag mono" id="modal-tag">KERNEL READY</span>
+          </div>
         </div>
-        <div class="sandbox-modal__title mono" id="modal-title">SYSTEM SANDBOX</div>
-        <button type="button" class="sandbox-modal__close mono" data-modal-close aria-label="Close modal">ESC ×</button>
-      </div>
+
+        <nav class="sandbox-modal__tabs" id="modal-tabs" aria-label="Workstation views">
+          <button type="button" class="sb-tab-btn is-active" data-ws-tab="sim">01 // Live Simulator</button>
+          <button type="button" class="sb-tab-btn" data-ws-tab="rfc">02 // Architecture &amp; RFC</button>
+          <button type="button" class="sb-tab-btn" data-ws-tab="bench">03 // Specs &amp; Benchmarks</button>
+        </nav>
+
+        <div class="sandbox-modal__header-right">
+          <a href="#" id="modal-source-link" class="sandbox-modal__btn-link mono" target="_blank" rel="noopener noreferrer">
+            <span>GitHub</span>
+            <svg aria-hidden="true" width="12" height="12" viewBox="0 0 13 13"><path d="M3 10 10 3M4 3h6v6" fill="none" stroke="currentColor" stroke-width="1.5"/></svg>
+          </a>
+          <button type="button" class="sandbox-modal__close mono" data-modal-close aria-label="Close modal">ESC ×</button>
+        </div>
+      </header>
+
       <div class="sandbox-modal__body" id="modal-body">
-        <!-- Injected dynamically per demo -->
+        <!-- Injected dynamically per project -->
       </div>
     </div>
   </div>
