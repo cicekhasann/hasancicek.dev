@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="en" class="js">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#1a1333">
+  <meta name="robots" content="noindex, nofollow">
+  <title>404 — Route Not Found · Hasan Çiçek</title>
+  <link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Plus+Jakarta+Sans:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap">
+  <link rel="stylesheet" href="/styles.css?v=20261110e">
+  <script>try{var t=localStorage.getItem("hc-theme");if(t&&t!=="amethyst")document.documentElement.setAttribute("data-theme",t);}catch(e){}</script>
+</head>
+<body>
+  <canvas class="ascii-field" aria-hidden="true"></canvas>
+
+  <header class="site-header is-scrolled">
+    <div class="site-header__inner">
+      <a class="brand" href="/" aria-label="Hasan Çiçek — home">
+        <span class="brand__mark">
+          <img src="/assets/logo-white.png?v=20261110e" alt="" width="36" height="36">
+        </span>
+        <span class="brand__name">hasancicek<span class="brand__tld">.dev</span></span>
+      </a>
+      <nav class="site-nav" aria-label="Primary">
+        <ul>
+          <li><a href="/#capabilities"><span>01</span>Capabilities</a></li>
+          <li><a href="/#system"><span>02</span>Live System</a></li>
+          <li><a href="/#open-source"><span>03</span>Open Source</a></li>
+          <li><a href="/#contact"><span>04</span>Contact</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <main class="error-stage">
+    <div class="hero__ambient" aria-hidden="true"></div>
+    <div class="hero__grid" aria-hidden="true"></div>
+
+    <div class="container error-grid">
+      <div>
+        <p class="eyebrow">
+          <span class="dot" aria-hidden="true"></span>
+          <span data-err-badge>HTTP 404 · ROUTE NOT FOUND</span>
+        </p>
+        <div class="error-code" data-err-code>404</div>
+        <h1 class="error-title" data-err-title>Packet dropped at the edge.</h1>
+        <p class="error-desc" data-err-desc>
+          The URI you requested does not match any active route in the Kovan ingress table. It may have been moved, retired, or never provisioned on this host.
+        </p>
+        <div class="error-actions">
+          <a class="btn btn--primary" href="/">
+            <span>Return to root /</span>
+            <svg aria-hidden="true" width="14" height="14" viewBox="0 0 14 14"><path d="M1 7h12M8 2l5 5-5 5" fill="none" stroke="currentColor" stroke-width="1.5"/></svg>
+          </a>
+          <a class="btn btn--ghost" href="/#contact">
+            <span>Report broken link</span>
+          </a>
+        </div>
+        <div class="error-pills mono" aria-label="Error status switcher">
+          <a href="/404.html" data-err-switch="404">404 · Not Found</a>
+          <a href="/403.html" data-err-switch="403">403 · Forbidden</a>
+          <a href="/500.html" data-err-switch="500">500 · System Fault</a>
+        </div>
+      </div>
+
+      <div class="term" role="region" aria-label="Edge router diagnostic trace">
+        <div class="term__bar">
+          <span class="term__dots" aria-hidden="true"><i></i><i></i><i></i></span>
+          <span class="term__title mono">kovan-edge: /var/log/ingress.log</span>
+          <span class="term__live mono"><span class="dot" aria-hidden="true"></span>trace</span>
+        </div>
+        <div class="term__body">
+          <p class="t-line"><span class="t-prompt">$</span> <span class="t-cmd">kovan-route inspect --uri <span data-err-path>/unknown</span></span></p>
+          <p class="t-line t-out"><span class="t-ok">[ ok ]</span> <span class="t-k">edge</span>     <span class="t-v">TLSv1.3 handshake verified · pf state clean</span></p>
+          <p class="t-line t-out"><span class="t-prompt" data-err-status-tag>[404 ]</span> <span class="t-k">lookup</span>   <span class="t-v" data-err-trace>upstream table miss · no matching vhost route</span></p>
+          <p class="t-line t-out"><span class="t-ok">[ ok ]</span> <span class="t-k">action</span>   <span class="t-v" data-err-action>graceful fallback rendered · 0 worker crashes</span></p>
+          <p class="t-line t-gap" aria-hidden="true"></p>
+          <p class="t-line"><span class="t-prompt">$</span> <span class="t-cmd">kovan-route suggest</span></p>
+          <p class="t-line t-out"><span class="t-motd">→ Try "/" (Hero), "/#capabilities", "/#system", or "/#open-source"</span></p>
+          <p class="t-line"><span class="t-prompt">$</span> <span class="t-cursor" aria-hidden="true"></span></p>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script defer src="/ascii-field.js?v=20261110e"></script>
+  <script>
+    (function () {
+      var pathEl = document.querySelector('[data-err-path]');
+      if (pathEl) pathEl.textContent = window.location.pathname || '/404';
+    })();
+  </script>
+</body>
+</html>
+

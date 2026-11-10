@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="en" class="js">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#1a1333">
+  <meta name="robots" content="noindex, nofollow">
+  <title>403 — Access Restricted · Hasan Çiçek</title>
+  <link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Plus+Jakarta+Sans:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap">
+  <link rel="stylesheet" href="/styles.css?v=20261110e">
+  <script>try{var t=localStorage.getItem("hc-theme");if(t&&t!=="amethyst")document.documentElement.setAttribute("data-theme",t);}catch(e){}</script>
+</head>
+<body>
+  <canvas class="ascii-field" aria-hidden="true"></canvas>
+
+  <header class="site-header is-scrolled">
+    <div class="site-header__inner">
+      <a class="brand" href="/" aria-label="Hasan Çiçek — home">
+        <span class="brand__mark">
+          <img src="/assets/logo-white.png?v=20261110e" alt="" width="36" height="36">
+        </span>
+        <span class="brand__name">hasancicek<span class="brand__tld">.dev</span></span>
+      </a>
+      <nav class="site-nav" aria-label="Primary">
+        <ul>
+          <li><a href="/#capabilities"><span>01</span>Capabilities</a></li>
+          <li><a href="/#system"><span>02</span>Live System</a></li>
+          <li><a href="/#open-source"><span>03</span>Open Source</a></li>
+          <li><a href="/#contact"><span>04</span>Contact</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <main class="error-stage">
+    <div class="hero__ambient" aria-hidden="true"></div>
+    <div class="hero__grid" aria-hidden="true"></div>
+
+    <div class="container error-grid">
+      <div>
+        <p class="eyebrow">
+          <span class="dot" aria-hidden="true"></span>
+          <span>HTTP 403 · ACCESS RESTRICTED</span>
+        </p>
+        <div class="error-code">403</div>
+        <h1 class="error-title">Blocked by zero-trust policy.</h1>
+        <p class="error-desc">
+          This resource sits behind an isolated jail boundary or requires a signed client certificate. Direct directory traversal and unauthenticated probes are denied by default.
+        </p>
+        <div class="error-actions">
+          <a class="btn btn--primary" href="/">
+            <span>Return to root /</span>
+            <svg aria-hidden="true" width="14" height="14" viewBox="0 0 14 14"><path d="M1 7h12M8 2l5 5-5 5" fill="none" stroke="currentColor" stroke-width="1.5"/></svg>
+          </a>
+          <a class="btn btn--ghost" href="/#contact">
+            <span>Request access</span>
+          </a>
+        </div>
+        <div class="error-pills mono" aria-label="Error status switcher">
+          <a href="/404.html">404 · Not Found</a>
+          <a href="/403.html">403 · Forbidden</a>
+          <a href="/500.html">500 · System Fault</a>
+        </div>
+      </div>
+
+      <div class="term" role="region" aria-label="Firewall policy trace">
+        <div class="term__bar">
+          <span class="term__dots" aria-hidden="true"><i></i><i></i><i></i></span>
+          <span class="term__title mono">kovan-pf: /var/log/pflog.0</span>
+          <span class="term__live mono"><span class="dot" aria-hidden="true"></span>enforced</span>
+        </div>
+        <div class="term__body">
+          <p class="t-line"><span class="t-prompt">$</span> <span class="t-cmd">pfctl -sr | grep <span data-err-path>/restricted</span></span></p>
+          <p class="t-line t-out"><span class="t-ok">[ ok ]</span> <span class="t-k">ingress</span>  <span class="t-v">TLSv1.3 session established</span></p>
+          <p class="t-line t-out"><span class="t-prompt">[403 ]</span> <span class="t-k">acl</span>      <span class="t-v">deny in quick on egress proto tcp · mTLS client cert missing</span></p>
+          <p class="t-line t-out"><span class="t-ok">[ ok ]</span> <span class="t-k">jail</span>     <span class="t-v">tenant namespace boundary intact · incident logged</span></p>
+          <p class="t-line t-gap" aria-hidden="true"></p>
+          <p class="t-line"><span class="t-prompt">$</span> <span class="t-cmd">cat /etc/kovan/policy.motd</span></p>
+          <p class="t-line t-out"><span class="t-motd">"Least privilege by default — every ingress path accounted for."</span></p>
+          <p class="t-line"><span class="t-prompt">$</span> <span class="t-cursor" aria-hidden="true"></span></p>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script defer src="/ascii-field.js?v=20261110e"></script>
+  <script>
+    (function () {
+      var pathEl = document.querySelector('[data-err-path]');
+      if (pathEl) pathEl.textContent = window.location.pathname || '/403';
+    })();
+  </script>
+</body>
+</html>
+

@@ -1,0 +1,41 @@
+services:
+  # ============================================================================
+  # TENANT APP: portfolio (hasancicek.dev — kişisel portfolyo, statik site)
+  # ============================================================================
+  app-portfolio:
+    image: portfolio:local
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: app-portfolio
+    restart: unless-stopped
+    env_file:
+      - .env
+    networks:
+      - kovan-public-net
+    labels:
+      - "traefik.enable=true"
+      - "traefik.docker.network=kovan-public-net"
+      # --- Canlı router: apex + www (HTTPS) ---
+      # TLS: Cloudflare Origin wildcard sertifikası (dynamic/tls.yml default store).
+      # certresolver BELİRTİLMEZ => ACME tetiklenmez, origin cert sunulur.
+      - "traefik.http.routers.portfolio.rule=Host(`${DOMAIN_NAME:-hasancicek.dev}`) || Host(`www.${DOMAIN_NAME:-hasancicek.dev}`)"
+      - "traefik.http.routers.portfolio.entrypoints=websecure"
+      - "traefik.http.routers.portfolio.tls=true"
+      - "traefik.http.routers.portfolio.middlewares=portfolio-wwwredirect,secHeaders@file,compress@file"
+      - "traefik.http.services.portfolio.loadbalancer.server.port=80"
+      # www.hasancicek.dev -> hasancicek.dev (apex kanonik) kalıcı yönlendirme
+      - "traefik.http.middlewares.portfolio-wwwredirect.redirectregex.regex=^https?://www\\.(.+)"
+      - "traefik.http.middlewares.portfolio-wwwredirect.redirectregex.replacement=https://$${1}"
+      - "traefik.http.middlewares.portfolio-wwwredirect.redirectregex.permanent=true"
+    healthcheck:
+      test: ["CMD-SHELL", "wget -q --spider http://127.0.0.1:80/health || exit 1"]
+      interval: 15s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+
+networks:
+  kovan-public-net:
+    name: kovan-public-net
+    external: true

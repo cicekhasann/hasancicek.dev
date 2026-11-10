@@ -1,0 +1,710 @@
+<!doctype html>
+<html lang="en" class="no-js">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#1a1333">
+  <meta name="color-scheme" content="dark">
+
+  <title>Hasan Çiçek — Systems &amp; Backend Engineer</title>
+  <meta name="description" content="Hasan Çiçek is a systems and backend engineer building resilient infrastructure, high-throughput services, and security-first architectures.">
+  <meta name="author" content="Hasan Çiçek">
+  <link rel="canonical" href="https://hasancicek.dev/">
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Hasan Çiçek">
+  <meta property="og:title" content="Hasan Çiçek — Systems &amp; Backend Engineer">
+  <meta property="og:description" content="Systems, distributed backends, security, and self-hosted infrastructure.">
+  <meta property="og:url" content="https://hasancicek.dev/">
+  <meta property="og:image" content="https://hasancicek.dev/assets/og-image.jpg?v=20261110e">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="Portrait of Hasan Çiçek — Systems &amp; Backend Engineer">
+  <meta property="og:locale" content="en_US">
+
+  <!-- Twitter -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Hasan Çiçek — Systems &amp; Backend Engineer">
+  <meta name="twitter:description" content="Systems, distributed backends, security, and self-hosted infrastructure.">
+  <meta name="twitter:image" content="https://hasancicek.dev/assets/og-image.jpg?v=20261110e">
+
+  <!-- Icons -->
+  <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32.png">
+  <link rel="icon" type="image/png" sizes="64x64" href="assets/favicon-64.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="assets/apple-touch-icon.png">
+
+  <!-- Fonts: Space Grotesk (display) · Plus Jakarta Sans (body) · JetBrains Mono (code/meta) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Plus+Jakarta+Sans:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap">
+
+  <!-- Preload hero portrait -->
+  <link rel="preload" as="image" href="assets/portre-aurora.webp?v=20261110e" type="image/webp" fetchpriority="high">
+
+  <link rel="stylesheet" href="styles.css?v=20261110e">
+
+  <!-- Pre-paint JS & Theme flag -->
+  <script>
+    (function () {
+      var d = document.documentElement;
+      d.classList.replace('no-js', 'js');
+      try {
+        var t = new URLSearchParams(location.search).get('theme') || localStorage.getItem('hc-theme');
+        if (t && t !== 'amethyst') d.setAttribute('data-theme', t);
+      } catch (e) {}
+      if (location.search.indexOf('noloader') === -1 && location.search.indexOf('noswarm') === -1) {
+        d.classList.add('is-loading');
+      }
+    })();
+  </script>
+
+  <!-- Structured data -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Person",
+    "name": "Hasan Çiçek",
+    "url": "https://hasancicek.dev/",
+    "image": "https://hasancicek.dev/assets/og-image.jpg?v=20261110e",
+    "jobTitle": "Systems & Backend Engineer",
+    "email": "mailto:hello@hasancicek.dev",
+    "sameAs": [
+      "https://github.com/cicekhasann"
+    ],
+    "knowsAbout": [
+      "Systems Architecture",
+      "Distributed Systems",
+      "Backend Engineering",
+      "Linux",
+      "FreeBSD",
+      "Network Security",
+      "Self-Hosted Cloud Infrastructure"
+    ]
+  }
+  </script>
+</head>
+
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+
+  <!-- Architectural Systems Preloader -->
+  <div class="site-loader" id="site-loader" data-loader aria-hidden="true">
+    <div class="site-loader__grid"></div>
+    <div class="site-loader__inner container">
+      <div class="site-loader__top">
+        <span class="site-loader__brand">
+          <img src="assets/logo-white.png?v=20261110e" alt="" width="30" height="30">
+          <span class="mono">hasancicek<span class="brand__tld">.dev</span></span>
+        </span>
+        <span class="site-loader__tag mono">KOVAN.NODE // BOOT</span>
+      </div>
+
+      <div class="site-loader__center">
+        <div class="site-loader__status mono">
+          <span class="dot"></span>
+          <span data-loader-step>INITIALIZING KERNEL SURFACE &amp; WEBGL PIPELINE</span>
+        </div>
+        <div class="site-loader__bar">
+          <span class="site-loader__fill" data-loader-fill></span>
+        </div>
+        <div class="site-loader__meta mono">
+          <span>TLSv1.3 · AEAD-CHACHA20</span>
+          <span data-loader-state>ALLOCATING FRAMEBUFFERS</span>
+        </div>
+      </div>
+
+      <div class="site-loader__bottom">
+        <span class="site-loader__label mono">SYSTEM READINESS</span>
+        <div class="site-loader__counter" aria-live="off">
+          <span data-loader-num>000</span><span class="site-loader__pct">%</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scroll progress bar -->
+  <div class="progress" aria-hidden="true"><span class="progress__bar" data-progress></span></div>
+
+  <!-- Living ASCII / Character Flow Field Canvas -->
+  <canvas class="ascii-field" aria-hidden="true"></canvas>
+
+  <!-- Fine grain overlay -->
+  <div class="grain" aria-hidden="true"></div>
+
+  <!-- Swarm intro mount point -->
+  <div id="swarm-mount" aria-hidden="true" hidden></div>
+
+  <!-- ====================================================================
+       HEADER
+       ==================================================================== -->
+  <header class="site-header" data-header>
+    <div class="site-header__inner">
+      <a class="brand" href="#top" aria-label="Hasan Çiçek — home">
+        <span class="brand__mark">
+          <img src="assets/logo-white.png?v=20261110e" alt="" width="36" height="36" decoding="async">
+        </span>
+        <span class="brand__name">hasancicek<span class="brand__tld">.dev</span></span>
+      </a>
+
+      <div class="site-header__actions">
+        <nav class="site-nav" id="site-nav" data-nav aria-label="Primary">
+          <ul>
+            <li><a href="#capabilities" data-nav-link><span>01</span>Capabilities</a></li>
+            <li><a href="#system" data-nav-link><span>02</span>Live System</a></li>
+            <li><a href="#open-source" data-nav-link><span>03</span>Open Source</a></li>
+            <li><a href="#contact" data-nav-link><span>04</span>Contact</a></li>
+          </ul>
+        </nav>
+
+        <!-- Integrated Header Palette Switcher (Default: Amethyst Purple) -->
+        <div class="theme-picker" data-theme-dock role="group" aria-label="Select color theme">
+          <button type="button" class="theme-picker__orb is-active" data-theme-btn="amethyst" aria-label="Amethyst theme (default)" title="Amethyst (Default)">
+            <span style="--orb:#c084fc"></span>
+          </button>
+          <button type="button" class="theme-picker__orb" data-theme-btn="crimson" aria-label="Crimson &amp; Copper theme" title="Crimson &amp; Copper">
+            <span style="--orb:#fb7185"></span>
+          </button>
+          <button type="button" class="theme-picker__orb" data-theme-btn="sapphire" aria-label="Royal Sapphire theme" title="Royal Sapphire">
+            <span style="--orb:#60a5fa"></span>
+          </button>
+          <button type="button" class="theme-picker__orb" data-theme-btn="titanium" aria-label="Titanium Platinum theme" title="Titanium Platinum">
+            <span style="--orb:#e2e8f0"></span>
+          </button>
+        </div>
+
+        <button class="nav-toggle" type="button" data-nav-toggle aria-expanded="false" aria-controls="site-nav" aria-label="Toggle navigation">
+          <span class="nav-toggle__line"></span>
+          <span class="nav-toggle__label" data-nav-label>Menu</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main id="main">
+    <!-- ==================================================================
+         HERO — Full-Height Right Portrait (Stays Behind on Scroll) + Left Editorial Stack
+         ================================================================== -->
+    <section class="hero" id="top" aria-labelledby="hero-title">
+      <div class="hero__ambient" aria-hidden="true"></div>
+      <div class="hero__grid" aria-hidden="true"></div>
+      <div class="hero__glow" data-hero-glow aria-hidden="true"></div>
+
+      <div class="hero__inner container">
+        <div class="hero__split">
+          <!-- Sol Sahne: Tam Okunur İsim + Özet + Butonlar + Mühendislik Meta -->
+          <div class="hero__copy">
+            <div class="hero__top" data-hero="1">
+              <!-- admin-managed: hero-eyebrow -->
+              <p class="eyebrow hero__eyebrow">
+                <span class="dot" aria-hidden="true"></span>
+                <span>Available for select work · Systems &amp; Backend</span>
+              </p>
+            </div>
+
+            <h1 class="hero__title" id="hero-title">
+              <!-- admin-managed: hero-title -->
+              <span class="line"><span data-hero="2">Hasan</span></span>
+              <span class="line"><span data-hero="3">Çiçek<span class="caret" aria-hidden="true"></span></span></span>
+            </h1>
+
+            <!-- admin-managed: hero-lede -->
+            <p class="hero__lede" data-hero="4">
+              I build the quiet parts of software — the <em>systems</em>,
+              <em>services</em>, and <em>security layers</em> that have to hold
+              when traffic isn’t polite.
+            </p>
+
+            <div class="hero__cta" data-hero="5">
+              <!-- admin-managed: hero-cta -->
+              <a class="btn btn--primary" href="#contact">
+                <span>Start a project</span>
+                <svg aria-hidden="true" width="14" height="14" viewBox="0 0 14 14"><path d="M1 7h12M8 2l5 5-5 5" fill="none" stroke="currentColor" stroke-width="1.5"/></svg>
+              </a>
+              <a class="btn btn--ghost" href="https://github.com/cicekhasann" target="_blank" rel="noopener noreferrer" aria-label="GitHub profile (opens in a new tab)">
+                <span>GitHub</span>
+                <svg aria-hidden="true" width="13" height="13" viewBox="0 0 13 13"><path d="M3 10 10 3M4 3h6v6" fill="none" stroke="currentColor" stroke-width="1.5"/></svg>
+              </a>
+            </div>
+          </div>
+
+          <!-- Sağ Sahne: Büyük, Orijinal Hatları Korunmuş 3D Kesim Portre -->
+          <figure class="hero__portrait" data-hero="portrait">
+            <div class="portrait portrait--cut" data-tilt>
+              <div class="portrait__halo" aria-hidden="true"></div>
+              <div class="portrait__orbit" aria-hidden="true"></div>
+              <div class="portrait__media">
+                <picture>
+                  <source data-portrait-webp srcset="assets/portre-aurora.webp?v=20261110e" type="image/webp">
+                  <img
+                    data-portrait-img
+                    src="assets/portre-aurora.webp?v=20261110e"
+                    alt="Portrait of Hasan Çiçek"
+                    width="1122"
+                    height="1402"
+                    fetchpriority="high"
+                    decoding="async"
+                  >
+                </picture>
+              </div>
+            </div>
+          </figure>
+        </div>
+
+        <!-- Alt Mühendislik Meta Barı -->
+        <div class="hero__bottom" data-hero="6">
+          <!-- admin-managed: hero-meta -->
+          <dl class="hero__meta">
+            <div>
+              <dt>Focus</dt>
+              <dd>Distributed backends · Linux &amp; FreeBSD · Networking</dd>
+            </div>
+            <div>
+              <dt>Stack</dt>
+              <dd class="mono">Go · Bash · Python · TypeScript · Node.js · SQL</dd>
+            </div>
+            <div>
+              <dt>Architecture</dt>
+              <dd>Bare-metal &amp; Self-hosted Cloud · Zero-Trust · High Availability</dd>
+            </div>
+          </dl>
+        </div>
+      </div>
+
+      <a class="scroll-cue" href="#hasan-showcase" aria-label="Scroll down">
+        <span class="mono">Scroll</span>
+        <span class="scroll-cue__line" aria-hidden="true"></span>
+      </a>
+    </section>
+
+    <!-- ==================================================================
+         HASAN — WebGL 3D Harf-Pencere Showcase (hasan-scene.js)
+         ================================================================== -->
+    <section class="hasan-scene" id="hasan-showcase" data-hasan-scene aria-label="HASAN — interactive showcase">
+      <div class="hasan-stage">
+        <canvas class="hasan-gl" aria-hidden="true"></canvas>
+
+        <div class="hasan-caption" data-hasan-caption data-side="left">
+          <div class="hasan-idx" data-hasan-idx>01 / 05</div>
+          <h2 class="hasan-ttl" data-hasan-ttl>SYSTEMS</h2>
+          <p class="hasan-desc" data-hasan-desc>Kernel-level networking on FreeBSD and Linux.</p>
+        </div>
+
+        <div class="hasan-hint" aria-hidden="true">↓ SCROLL</div>
+      </div>
+    </section>
+
+    <!-- ==================================================================
+         DISCIPLINE TICKER
+         ================================================================== -->
+    <div class="ticker" aria-label="Core disciplines">
+      <!-- admin-managed: ticker -->
+      <div class="ticker__track" data-ticker>
+        <ul class="ticker__list">
+          <li>Systems Architecture</li>
+          <li>Distributed Backends</li>
+          <li>Linux &amp; FreeBSD</li>
+          <li>Network Security</li>
+          <li>High-Concurrency Services</li>
+          <li>Self-Hosted Cloud</li>
+          <li>Observability &amp; Telemetry</li>
+          <li>Zero-Downtime Delivery</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- ==================================================================
+         01 / CAPABILITIES — Suspended Full-Bleed Artwork Tapestries
+         ================================================================== -->
+    <section class="section capabilities" id="capabilities" aria-labelledby="cap-title" tabindex="-1">
+      <div class="container">
+        <!-- admin-managed: capabilities-header -->
+        <header class="sec-head sec-head--split">
+          <div>
+            <p class="eyebrow" data-reveal><span class="eyebrow__num">01</span><span>Capabilities</span></p>
+            <h2 class="sec-title" id="cap-title" data-reveal>Built to hold under load.</h2>
+          </div>
+          <p class="sec-lede" data-reveal>
+            No vanity microservices, no mystery layers. Every component earns its place on the host — engineered for clarity, throughput, and operational calm.
+          </p>
+        </header>
+
+        <!-- admin-managed: capabilities-list -->
+        <ol class="cap-grid" data-pendulum-grid>
+          <!-- 01 -->
+          <li class="cap" data-spotlight data-pendulum data-reveal style="--cap-accent: #e879f9; --hang-angle: -1.6deg; --swing-dur: 5.4s; --swing-delay: 0s;">
+            <div class="cap__rope" aria-hidden="true">
+              <span class="cap__anchor cap__anchor--l"></span>
+              <svg class="cap__rope-svg" viewBox="0 0 600 48" preserveAspectRatio="none">
+                <path class="cap__rope-shadow" data-rope-shadow d="M 0,12 Q 54,24 108,24 Q 300,32 492,24 Q 546,24 600,12" />
+                <path class="cap__rope-main" data-rope-main d="M 0,10 Q 54,22 108,22 Q 300,30 492,22 Q 546,22 600,10" />
+                <path class="cap__rope-braid" data-rope-braid d="M 0,10 Q 54,22 108,22 Q 300,30 492,22 Q 546,22 600,10" />
+              </svg>
+            </div>
+            <article>
+              <div class="cap__hanger" aria-hidden="true">
+                <span class="cap__pin cap__pin--l"><i class="cap__clamp"></i><u class="cap__eyelet"></u></span>
+                <span class="cap__pin cap__pin--r"><i class="cap__clamp"></i><u class="cap__eyelet"></u></span>
+              </div>
+              <div class="cap__surface">
+                <div class="cap__art" aria-hidden="true">
+                  <img src="assets/hasan/letter-1.webp?v=20261110e" alt="" width="900" height="560" loading="lazy" decoding="async">
+                </div>
+                <div class="cap__body">
+                  <header class="cap__top">
+                    <span class="cap__num mono">01 <span class="cap__of">/ 04</span></span>
+                    <svg class="cap__icon" aria-hidden="true" width="28" height="28" viewBox="0 0 28 28">
+                      <rect x="3" y="4" width="22" height="6" rx="1" fill="none" stroke="currentColor" stroke-width="1.4"/>
+                      <rect x="3" y="12" width="22" height="6" rx="1" fill="none" stroke="currentColor" stroke-width="1.4"/>
+                      <rect x="3" y="20" width="22" height="4" rx="1" fill="none" stroke="currentColor" stroke-width="1.4"/>
+                      <circle cx="7" cy="7" r="1.2" fill="currentColor"/>
+                      <circle cx="7" cy="15" r="1.2" fill="currentColor"/>
+                    </svg>
+                  </header>
+                  <h3 class="cap__title">Systems &amp; Infrastructure</h3>
+                  <p class="cap__desc">
+                    Hardened Linux and FreeBSD hosts tuned from kernel parameters to process supervisor — predictable, reproducible, and boring at 3 a.m.
+                  </p>
+                  <ul class="cap__list">
+                    <li>FreeBSD jails, ZFS pools, and Linux cgroups / namespaces isolation</li>
+                    <li>Containerized services, custom process supervision, and port routing</li>
+                    <li>Immutable provisioning, reproducible builds, and zero-downtime rollouts</li>
+                    <li>Capacity planning, kernel sysctl tuning, and resource accounting</li>
+                  </ul>
+                  <p class="cap__also">Also: systemd unit hardening, cloud-init, Ansible, QEMU/KVM.</p>
+                  <ul class="tags" aria-label="Technologies">
+                    <li>Linux</li><li>FreeBSD</li><li>Docker</li><li>ZFS</li><li>Jails</li><li>Nginx</li>
+                  </ul>
+                </div>
+              </div>
+            </article>
+          </li>
+
+          <!-- 02 -->
+          <li class="cap" data-spotlight data-pendulum data-reveal style="--cap-accent: #c084fc; --hang-angle: 1.5deg; --swing-dur: 6.1s; --swing-delay: -1.8s;">
+            <div class="cap__rope" aria-hidden="true">
+              <span class="cap__anchor cap__anchor--r"></span>
+              <svg class="cap__rope-svg" viewBox="0 0 600 48" preserveAspectRatio="none">
+                <path class="cap__rope-shadow" data-rope-shadow d="M 0,12 Q 54,24 108,24 Q 300,32 492,24 Q 546,24 600,12" />
+                <path class="cap__rope-main" data-rope-main d="M 0,10 Q 54,22 108,22 Q 300,30 492,22 Q 546,22 600,10" />
+                <path class="cap__rope-braid" data-rope-braid d="M 0,10 Q 54,22 108,22 Q 300,30 492,22 Q 546,22 600,10" />
+              </svg>
+            </div>
+            <article>
+              <div class="cap__hanger" aria-hidden="true">
+                <span class="cap__pin cap__pin--l"><i class="cap__clamp"></i><u class="cap__eyelet"></u></span>
+                <span class="cap__pin cap__pin--r"><i class="cap__clamp"></i><u class="cap__eyelet"></u></span>
+              </div>
+              <div class="cap__surface">
+                <div class="cap__art" aria-hidden="true">
+                  <img src="assets/hasan/letter-4.webp?v=20261110e" alt="" width="900" height="560" loading="lazy" decoding="async">
+                </div>
+                <div class="cap__body">
+                  <header class="cap__top">
+                    <span class="cap__num mono">02 <span class="cap__of">/ 04</span></span>
+                    <svg class="cap__icon" aria-hidden="true" width="28" height="28" viewBox="0 0 28 28">
+                      <circle cx="6" cy="7" r="2.5" fill="none" stroke="currentColor" stroke-width="1.4"/>
+                      <circle cx="22" cy="7" r="2.5" fill="none" stroke="currentColor" stroke-width="1.4"/>
+                      <circle cx="14" cy="21" r="2.5" fill="none" stroke="currentColor" stroke-width="1.4"/>
+                      <path d="M8.5 7h11M7.5 9.2 12.5 19M20.5 9.2 15.5 19" fill="none" stroke="currentColor" stroke-width="1.4"/>
+                    </svg>
+                  </header>
+                  <h3 class="cap__title">Backend &amp; Distributed Services</h3>
+                  <p class="cap__desc">
+                    APIs, workers, and event pipelines designed around backpressure, idempotency, and clean failure modes instead of wishful retries.
+                  </p>
+                  <ul class="cap__list">
+                    <li>High-concurrency HTTP, gRPC, and WebSocket services in Go, TypeScript, and Python</li>
+                    <li>Job queues, outbox patterns, rate limiters, and circuit breakers</li>
+                    <li>Multi-tenant auth, RBAC, session stores, and cryptographic token flows</li>
+                    <li>Strict schema contracts, migrations, and backwards-compatible deploys</li>
+                  </ul>
+                  <p class="cap__also">Also: REST/OpenAPI, gRPC, message brokers, webhook delivery engines.</p>
+                  <ul class="tags" aria-label="Technologies">
+                    <li>Go</li><li>TypeScript</li><li>Node.js</li><li>Python</li><li>gRPC</li><li>Redis</li>
+                  </ul>
+                </div>
+              </div>
+            </article>
+          </li>
+
+          <!-- 03 -->
+          <li class="cap" data-spotlight data-pendulum data-reveal style="--cap-accent: #fb923c; --hang-angle: 1.4deg; --swing-dur: 5.8s; --swing-delay: -3.2s;">
+            <div class="cap__rope" aria-hidden="true">
+              <span class="cap__anchor cap__anchor--l"></span>
+              <svg class="cap__rope-svg" viewBox="0 0 600 48" preserveAspectRatio="none">
+                <path class="cap__rope-shadow" data-rope-shadow d="M 0,12 Q 54,24 108,24 Q 300,32 492,24 Q 546,24 600,12" />
+                <path class="cap__rope-main" data-rope-main d="M 0,10 Q 54,22 108,22 Q 300,30 492,22 Q 546,22 600,10" />
+                <path class="cap__rope-braid" data-rope-braid d="M 0,10 Q 54,22 108,22 Q 300,30 492,22 Q 546,22 600,10" />
+              </svg>
+            </div>
+            <article>
+              <div class="cap__hanger" aria-hidden="true">
+                <span class="cap__pin cap__pin--l"><i class="cap__clamp"></i><u class="cap__eyelet"></u></span>
+                <span class="cap__pin cap__pin--r"><i class="cap__clamp"></i><u class="cap__eyelet"></u></span>
+              </div>
+              <div class="cap__surface">
+                <div class="cap__art" aria-hidden="true">
+                  <img src="assets/hasan/letter-2.webp?v=20261110e" alt="" width="900" height="560" loading="lazy" decoding="async">
+                </div>
+                <div class="cap__body">
+                  <header class="cap__top">
+                    <span class="cap__num mono">03 <span class="cap__of">/ 04</span></span>
+                    <svg class="cap__icon" aria-hidden="true" width="28" height="28" viewBox="0 0 28 28">
+                      <path d="M14 3 24 7v7c0 6.2-4.2 10.2-10 11-5.8-.8-10-4.8-10-11V7Z" fill="none" stroke="currentColor" stroke-width="1.4"/>
+                      <path d="M10.5 14.5 13 17l4.8-5" fill="none" stroke="currentColor" stroke-width="1.4"/>
+                    </svg>
+                  </header>
+                  <h3 class="cap__title">Security &amp; Networking</h3>
+                  <p class="cap__desc">
+                    Defense-in-depth from packet filter to application boundary. Least privilege by default, every ingress path accounted for.
+                  </p>
+                  <ul class="cap__list">
+                    <li>PF / nftables firewalls, WireGuard meshes, and segmented routing tables</li>
+                    <li>TLS termination, mTLS service meshes, and automated ACME lifecycles</li>
+                    <li>DDoS mitigation, L4/L7 rate limiting, and zero-trust perimeter access</li>
+                    <li>Secret management, audit logging, and supply-chain verification</li>
+                  </ul>
+                  <p class="cap__also">Also: SSH bastion design, DNSSEC, fail2ban, threat modelling.</p>
+                  <ul class="tags" aria-label="Technologies">
+                    <li>WireGuard</li><li>nftables</li><li>PF</li><li>TLS 1.3</li><li>mTLS</li><li>OpenSSH</li>
+                  </ul>
+                </div>
+              </div>
+            </article>
+          </li>
+
+          <!-- 04 -->
+          <li class="cap" data-spotlight data-pendulum data-reveal style="--cap-accent: #a78bfa; --hang-angle: -1.5deg; --swing-dur: 6.4s; --swing-delay: -0.9s;">
+            <div class="cap__rope" aria-hidden="true">
+              <span class="cap__anchor cap__anchor--r"></span>
+              <svg class="cap__rope-svg" viewBox="0 0 600 48" preserveAspectRatio="none">
+                <path class="cap__rope-shadow" data-rope-shadow d="M 0,12 Q 54,24 108,24 Q 300,32 492,24 Q 546,24 600,12" />
+                <path class="cap__rope-main" data-rope-main d="M 0,10 Q 54,22 108,22 Q 300,30 492,22 Q 546,22 600,10" />
+                <path class="cap__rope-braid" data-rope-braid d="M 0,10 Q 54,22 108,22 Q 300,30 492,22 Q 546,22 600,10" />
+              </svg>
+            </div>
+            <article>
+              <div class="cap__hanger" aria-hidden="true">
+                <span class="cap__pin cap__pin--l"><i class="cap__clamp"></i><u class="cap__eyelet"></u></span>
+                <span class="cap__pin cap__pin--r"><i class="cap__clamp"></i><u class="cap__eyelet"></u></span>
+              </div>
+              <div class="cap__surface">
+                <div class="cap__art" aria-hidden="true">
+                  <img src="assets/hasan/letter-3.webp?v=20261110e" alt="" width="900" height="560" loading="lazy" decoding="async">
+                </div>
+                <div class="cap__body">
+                  <header class="cap__top">
+                    <span class="cap__num mono">04 <span class="cap__of">/ 04</span></span>
+                    <svg class="cap__icon" aria-hidden="true" width="28" height="28" viewBox="0 0 28 28">
+                      <ellipse cx="14" cy="7" rx="9" ry="3.2" fill="none" stroke="currentColor" stroke-width="1.4"/>
+                      <path d="M5 7v7c0 1.8 4 3.2 9 3.2s9-1.4 9-3.2V7" fill="none" stroke="currentColor" stroke-width="1.4"/>
+                      <path d="M5 14v7c0 1.8 4 3.2 9 3.2s9-1.4 9-3.2v-7" fill="none" stroke="currentColor" stroke-width="1.4"/>
+                    </svg>
+                  </header>
+                  <h3 class="cap__title">Data, Storage &amp; Observability</h3>
+                  <p class="cap__desc">
+                    Fast queries, verified backups, and telemetry that tells you <em>why</em> latency spiked before a user writes in.
+                  </p>
+                  <ul class="cap__list">
+                    <li>PostgreSQL &amp; SQLite schema design, indexing, and query-plan tuning</li>
+                    <li>Streaming replication, WAL archiving, and tested point-in-time recovery</li>
+                    <li>Structured logs, RED/USE metrics, and low-overhead distributed tracing</li>
+                    <li>Time-series pipelines, SLO burn alerts, and live operational dashboards</li>
+                  </ul>
+                  <p class="cap__also">Also: ClickHouse, Prometheus, Grafana, OpenTelemetry, ZFS snapshots.</p>
+                  <ul class="tags" aria-label="Technologies">
+                    <li>PostgreSQL</li><li>SQLite</li><li>Redis</li><li>Prometheus</li><li>OpenTelemetry</li><li>ZFS</li>
+                  </ul>
+                </div>
+              </div>
+            </article>
+          </li>
+        </ol>
+      </div>
+    </section>
+
+    <!-- ==================================================================
+         02 / LIVE SYSTEM — Kovan Self-Hosted PaaS & Telemetry
+         ================================================================== -->
+    <section class="section system" id="system" aria-labelledby="sys-title" tabindex="-1">
+      <div class="container system__inner">
+        <div class="system__copy">
+          <!-- admin-managed: system-copy -->
+          <p class="eyebrow" data-reveal><span class="eyebrow__num">02</span><span>Live System · Proof</span></p>
+          <h2 class="sec-title" id="sys-title" data-reveal>This page is its own case study.</h2>
+          <p class="sec-lede" data-reveal>
+            You’re not reading a static template on a rented CDN. This site is served from
+            <strong>Kovan</strong> — a self-hosted, multi-tenant PaaS I built and run on my own
+            infrastructure, from packet filter to process supervisor.
+          </p>
+
+          <!-- admin-managed: system-flow -->
+          <ol class="flow" aria-label="Request path from edge to process" data-reveal>
+            <li>
+              <span class="flow__k mono">01 · Edge</span>
+              <span class="flow__v">PF firewall &amp; connection rate tables</span>
+            </li>
+            <li>
+              <span class="flow__k mono">02 · Ingress</span>
+              <span class="flow__v">TLS 1.3 termination &amp; reverse proxy</span>
+            </li>
+            <li>
+              <span class="flow__k mono">03 · Isolation</span>
+              <span class="flow__v">Per-tenant jail / namespace boundary</span>
+            </li>
+            <li>
+              <span class="flow__k mono">04 · Runtime</span>
+              <span class="flow__v">Supervised worker · health-checked · zero-downtime reload</span>
+            </li>
+          </ol>
+        </div>
+
+        <!-- Live terminal card -->
+        <div class="term" data-terminal data-reveal role="region" aria-label="Live system telemetry terminal">
+          <div class="term__bar">
+            <span class="term__dots" aria-hidden="true"><i></i><i></i><i></i></span>
+            <span class="term__title mono">hasan@kovan: ~ — zsh</span>
+            <span class="term__live mono"><span class="dot" aria-hidden="true"></span>live</span>
+          </div>
+          <!-- admin-managed: system-terminal -->
+          <div class="term__body" tabindex="0">
+            <p class="t-line"><span class="t-prompt">$</span> <span class="t-cmd t-type">kovan status --host hasancicek.dev</span></p>
+            <p class="t-line t-out"><span class="t-ok">[ ok ]</span> <span class="t-k">node</span>     <span class="t-v">kovan-core-01 · FreeBSD / Linux hybrid host</span></p>
+            <p class="t-line t-out"><span class="t-ok">[ ok ]</span> <span class="t-k">firewall</span> <span class="t-v">pf · state table healthy · synproxy active</span></p>
+            <p class="t-line t-out"><span class="t-ok">[ ok ]</span> <span class="t-k">tls</span>      <span class="t-v">TLSv1.3 · AEAD-CHACHA20-POLY1305 · OCSP stapled</span></p>
+            <p class="t-line t-out"><span class="t-ok">[ ok ]</span> <span class="t-k">tenant</span>   <span class="t-v">portfolio · isolated · memory-capped</span></p>
+            <p class="t-line t-out"><span class="t-ok">[ ok ]</span> <span class="t-k">deploy</span>   <span class="t-v">atomic symlink swap · 0 dropped requests</span></p>
+            <p class="t-line t-gap" aria-hidden="true"></p>
+            <p class="t-line"><span class="t-prompt">$</span> <span class="t-cmd t-type">uname -srm &amp;&amp; uptime</span></p>
+            <p class="t-line t-out"><span class="t-stack">FreeBSD 14.1-RELEASE-p5 amd64 · load averages: 0.08, 0.06, 0.05</span></p>
+            <p class="t-line t-gap" aria-hidden="true"></p>
+            <p class="t-line"><span class="t-prompt">$</span> <span class="t-cmd t-type">cat /etc/motd</span></p>
+            <p class="t-line t-out"><span class="t-motd">"Build it so clearly that waking up to an alert is the exception, not the job."</span></p>
+            <p class="t-line"><span class="t-prompt">$</span> <span class="t-cursor" aria-hidden="true"></span></p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================================================================
+         03 / OPEN SOURCE — Live Public Repositories from GitHub
+         ================================================================== -->
+    <section class="section oss" id="open-source" aria-labelledby="oss-title" tabindex="-1">
+      <div class="container">
+        <header class="sec-head sec-head--row sec-head--tight">
+          <div>
+            <p class="eyebrow" data-reveal><span class="eyebrow__num">03</span><span>Open Source</span></p>
+            <h2 class="sec-title" id="oss-title" data-reveal>Code in the open.</h2>
+          </div>
+          <div class="sec-head__side" data-reveal>
+            <p class="sec-lede">
+              Public repositories pulled live from GitHub — tools, experiments, and infrastructure code I maintain.
+            </p>
+            <a class="link-arrow" href="https://github.com/cicekhasann" target="_blank" rel="noopener noreferrer">
+              <span>github.com/cicekhasann</span>
+              <span aria-hidden="true">↗</span>
+            </a>
+          </div>
+        </header>
+
+        <p class="oss__status mono" data-repo-status aria-live="polite"></p>
+
+        <ul class="repo-grid" data-repo-grid aria-busy="false">
+          <li class="repo-fallback">
+            <a class="repo repo--fallback" href="https://github.com/cicekhasann" target="_blank" rel="noopener noreferrer">
+              <span class="repo__top">
+                <span class="repo__label">github.com/cicekhasann</span>
+                <span class="repo__arrow" aria-hidden="true">↗</span>
+              </span>
+              <h3 class="repo__name">Browse all repositories on GitHub</h3>
+              <p class="repo__desc">View source code, commit history, and systems tooling directly on GitHub.</p>
+            </a>
+          </li>
+        </ul>
+
+        <div class="oss__more">
+          <button class="btn btn--ghost" type="button" data-repo-more aria-expanded="false" hidden>
+            <span>Show all repositories</span>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================================================================
+         04 / CONTACT
+         ================================================================== -->
+    <section class="section contact" id="contact" aria-labelledby="contact-title" tabindex="-1">
+      <div class="container">
+        <!-- admin-managed: contact-header -->
+        <p class="eyebrow" data-reveal><span class="eyebrow__num">04</span><span>Contact</span></p>
+        <h2 class="contact__title" id="contact-title" data-reveal>
+          Need a system that <span class="accent">stays up</span>?
+        </h2>
+        <p class="sec-lede" data-reveal>
+          Available for consulting, architecture reviews, backend &amp; infrastructure roles, or a direct conversation about hard engineering problems.
+        </p>
+
+        <!-- admin-managed: contact-email -->
+        <a class="contact__mail" href="mailto:hello@hasancicek.dev" data-reveal>
+          <span class="contact__mail-text">hello<wbr>@hasancicek<wbr>.dev</span>
+          <span class="contact__mail-arrow" aria-hidden="true">→</span>
+        </a>
+
+        <!-- admin-managed: contact-links -->
+        <ul class="contact__links" data-reveal>
+          <li>
+            <a href="https://github.com/cicekhasann" target="_blank" rel="noopener noreferrer">
+              <span class="mono">01 / GitHub</span>
+              <span>@cicekhasann</span>
+              <span aria-hidden="true">↗</span>
+            </a>
+          </li>
+          <li>
+            <a href="mailto:hello@hasancicek.dev">
+              <span class="mono">02 / Email</span>
+              <span>hello@hasancicek.dev</span>
+              <span aria-hidden="true">↗</span>
+            </a>
+          </li>
+        </ul>
+
+        <dl class="contact__meta">
+          <div>
+            <dt class="mono">Collaboration</dt>
+            <dd>Remote · Async-First · Worldwide</dd>
+          </div>
+          <div>
+            <dt class="mono">Response time</dt>
+            <dd>Usually within 24 hours</dd>
+          </div>
+          <div>
+            <dt class="mono">Languages</dt>
+            <dd>Turkish · English</dd>
+          </div>
+        </dl>
+      </div>
+    </section>
+  </main>
+
+  <!-- ====================================================================
+       FOOTER
+       ==================================================================== -->
+  <footer class="site-footer">
+    <div class="container site-footer__inner">
+      <p>© <span data-year>2026</span> Hasan Çiçek. Built by hand — no templates, no trackers.</p>
+      <p class="mono">hasancicek.dev · Served by Kovan</p>
+    </div>
+  </footer>
+
+  <!-- Optional CDN libraries -->
+  <script defer src="https://cdn.jsdelivr.net/npm/lenis@1.1.18/dist/lenis.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
+
+  <!-- Core Portfolio Scripts -->
+  <script defer src="ascii-field.js?v=20261110e"></script>
+  <script defer src="script.js?v=20261110e"></script>
+  <script defer src="hasan-scene.js?v=20261110e"></script>
+</body>
+</html>
