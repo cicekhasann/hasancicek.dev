@@ -972,8 +972,8 @@
        01: CVEGRID WORKSTATION
        ====================================================================== */
     function renderCvegridWorkstation(titleEl, tagEl, bodyEl) {
-      titleEl.textContent = 'CVEGRID // THREAT INTELLIGENCE & DOSSIER EXPLORER';
-      if (tagEl) tagEl.textContent = 'ACTIVE SYSTEM · NVD MIRROR';
+      titleEl.textContent = 'cvegrid';
+      if (tagEl) tagEl.textContent = 'Threat Intelligence Matrix';
 
       const cves = [
         { id: 'CVE-2026-3841', cvss: '9.8', sev: 'CRIT', eco: 'LINUX KERNEL', sub: 'net/sched: packet scheduler buffer overflow in tc filter', epss: '0.892', cti: 'APT-29 / Active Exploitation' },
@@ -1144,8 +1144,8 @@ Throughput &amp; Storage Footprint:
        02: PACKETVEIL WORKSTATION (eBPF & Firewall Engine)
        ====================================================================== */
     function renderPacketveilWorkstation(titleEl, tagEl, bodyEl) {
-      titleEl.textContent = 'PACKETVEIL // L4/L7 STATEFUL INSPECTION & ANTI-SYN SHIELD';
-      if (tagEl) tagEl.textContent = 'FAST-PATH · 0 B/OP · 94.9 NS/FLOW';
+      titleEl.textContent = 'packetveil';
+      if (tagEl) tagEl.textContent = 'Stateful L4/L7 Engine';
 
       bodyEl.innerHTML = `
         <div class="ws-view ws-view--sim is-active" data-view="sim">
@@ -1364,8 +1364,8 @@ Concurrency &amp; Race Detector:
        03: RINGLIMIT WORKSTATION (Lock-Free Rate Limiter)
        ====================================================================== */
     function renderRinglimitWorkstation(titleEl, tagEl, bodyEl) {
-      titleEl.textContent = 'RINGLIMIT // LOCK-FREE TOKEN BUCKET & BACKPRESSURE SHAPER';
-      if (tagEl) tagEl.textContent = '32.8M OPS/S · 0 B/OP · SMP CACHE-LINE ALIGNED';
+      titleEl.textContent = 'ringlimit';
+      if (tagEl) tagEl.textContent = 'Lock-Free Token Bucket';
 
       bodyEl.innerHTML = `
         <div class="ws-view ws-view--sim is-active" data-view="sim">
@@ -1553,8 +1553,8 @@ BenchmarkLimiter_AllowParallel-16 (Contended SMP Multi-threading):
        04: WALKV WORKSTATION (Storage Engine & Crash Recovery)
        ====================================================================== */
     function renderWalkvWorkstation(titleEl, tagEl, bodyEl) {
-      titleEl.textContent = 'WALKV // WRITE-AHEAD LOG & MEMTABLE CRASH RECOVERY';
-      if (tagEl) tagEl.textContent = 'POSIX O_APPEND · CRC32 CASTAGNOLI · ZERO-LOSS REPLAY';
+      titleEl.textContent = 'walkv';
+      if (tagEl) tagEl.textContent = 'Append-Only WAL Engine';
 
       bodyEl.innerHTML = `
         <div class="ws-view ws-view--sim is-active" data-view="sim">
@@ -1707,8 +1707,8 @@ Crash Resilience Test:
        05: TLSVAULT WORKSTATION (Zero-Trust TLS 1.3 Auditor)
        ====================================================================== */
     function renderTlsvaultWorkstation(titleEl, tagEl, bodyEl) {
-      titleEl.textContent = 'TLSVAULT // ZERO-TRUST TLS 1.3 AUDITOR & CIPHER INSPECTOR';
-      if (tagEl) tagEl.textContent = 'RFC 8446 · 1-RTT ECDHE · AEAD CHACHA20 / AES-GCM';
+      titleEl.textContent = 'tlsvault';
+      if (tagEl) tagEl.textContent = 'Zero-Trust TLS 1.3';
 
       bodyEl.innerHTML = `
         <div class="ws-view ws-view--sim is-active" data-view="sim">
