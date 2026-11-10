@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="en" class="js">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#1a1333">
+  <meta name="robots" content="noindex, nofollow">
+  <title>500 — Upstream Fault · Hasan Çiçek</title>
+  <link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Plus+Jakarta+Sans:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap">
+  <link rel="stylesheet" href="/styles.css?v=20261110e">
+  <script>try{var t=localStorage.getItem("hc-theme");if(t&&t!=="amethyst")document.documentElement.setAttribute("data-theme",t);}catch(e){}</script>
+</head>
+<body>
+  <canvas class="ascii-field" aria-hidden="true"></canvas>
+
+  <header class="site-header is-scrolled">
+    <div class="site-header__inner">
+      <a class="brand" href="/" aria-label="Hasan Çiçek — home">
+        <span class="brand__mark">
+          <img src="/assets/logo-white.png?v=20261110e" alt="" width="36" height="36">
+        </span>
+        <span class="brand__name">hasancicek<span class="brand__tld">.dev</span></span>
+      </a>
+      <nav class="site-nav" aria-label="Primary">
+        <ul>
+          <li><a href="/#capabilities"><span>01</span>Capabilities</a></li>
+          <li><a href="/#system"><span>02</span>Live System</a></li>
+          <li><a href="/#open-source"><span>03</span>Open Source</a></li>
+          <li><a href="/#contact"><span>04</span>Contact</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <main class="error-stage">
+    <div class="hero__ambient" aria-hidden="true"></div>
+    <div class="hero__grid" aria-hidden="true"></div>
+
+    <div class="container error-grid">
+      <div>
+        <p class="eyebrow">
+          <span class="dot" aria-hidden="true"></span>
+          <span>HTTP 500 · CIRCUIT BREAKER TRIPPED</span>
+        </p>
+        <div class="error-code">500</div>
+        <h1 class="error-title">Upstream worker fault.</h1>
+        <p class="error-desc">
+          An unexpected exception occurred while fulfilling the request. The circuit breaker isolated the worker and the process supervisor is recycling the instance.
+        </p>
+        <div class="error-actions">
+          <a class="btn btn--primary" href="/">
+            <span>Return to root /</span>
+            <svg aria-hidden="true" width="14" height="14" viewBox="0 0 14 14"><path d="M1 7h12M8 2l5 5-5 5" fill="none" stroke="currentColor" stroke-width="1.5"/></svg>
+          </a>
+          <a class="btn btn--ghost" href="/#system">
+            <span>Inspect telemetry</span>
+          </a>
+        </div>
+        <div class="error-pills mono" aria-label="Error status switcher">
+          <a href="/404.html">404 · Not Found</a>
+          <a href="/403.html">403 · Forbidden</a>
+          <a href="/500.html">500 · System Fault</a>
+        </div>
+      </div>
+
+      <div class="term" role="region" aria-label="Supervisor recovery trace">
+        <div class="term__bar">
+          <span class="term__dots" aria-hidden="true"><i></i><i></i><i></i></span>
+          <span class="term__title mono">kovan-supervisor: worker-recovery</span>
+          <span class="term__live mono"><span class="dot" aria-hidden="true"></span>recovering</span>
+        </div>
+        <div class="term__body">
+          <p class="t-line"><span class="t-prompt">$</span> <span class="t-cmd">kovanctl status --worker <span data-err-path>/500</span></span></p>
+          <p class="t-line t-out"><span class="t-prompt">[500 ]</span> <span class="t-k">upstream</span> <span class="t-v">worker-02 exited with non-zero status · circuit open</span></p>
+          <p class="t-line t-out"><span class="t-ok">[ ok ]</span> <span class="t-k">failover</span> <span class="t-v">traffic drained to standby replica · 0 data loss</span></p>
+          <p class="t-line t-out"><span class="t-ok">[ ok ]</span> <span class="t-k">trace</span>    <span class="t-v">OpenTelemetry span exported · alert dispatched</span></p>
+          <p class="t-line t-gap" aria-hidden="true"></p>
+          <p class="t-line"><span class="t-prompt">$</span> <span class="t-cursor" aria-hidden="true"></span></p>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script defer src="/ascii-field.js?v=20261110e"></script>
+  <script>
+    (function () {
+      var pathEl = document.querySelector('[data-err-path]');
+      if (pathEl) pathEl.textContent = window.location.pathname || '/500';
+    })();
+  </script>
+</body>
+</html>
+

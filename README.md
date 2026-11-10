@@ -105,3 +105,4 @@ docker inspect -f "{{.State.Health.Status}}" app-portfolio
 
 Copyright © 2026 Hasan Çiçek. All rights reserved.  
 Open-source code and experiments are released under individual repository licenses on [github.com/cicekhasann](https://github.com/cicekhasann).
+
