@@ -2359,12 +2359,11 @@ html[data-theme="titanium"] .ticker {
   position: relative;
   z-index: 1;
   width: 96vw;
-  max-width: 1260px;
-  height: 92vh;
-  max-height: 92vh;
+  max-width: 1240px;
+  max-height: 90vh;
   background: #070a12;
   border: 1px solid rgba(255, 255, 255, 0.12);
-  border-radius: 14px;
+  border-radius: 12px;
   box-shadow: 0 32px 90px rgba(0, 0, 0, 0.9), 0 0 0 1px rgba(255, 255, 255, 0.05), 0 0 80px rgba(56, 189, 248, 0.04);
   display: flex;
   flex-direction: column;

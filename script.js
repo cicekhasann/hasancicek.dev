@@ -873,30 +873,9 @@
     const modalTag = document.getElementById('modal-tag');
     const modalBody = document.getElementById('modal-body');
     const modalSourceLink = document.getElementById('modal-source-link');
-    const tabButtons = document.querySelectorAll('[data-ws-tab]');
     if (!modal || !modalTitle || !modalBody) return;
 
     let activeCleanup = null;
-    let currentDemoId = 'cvegrid';
-    let currentTab = 'sim';
-
-    function setTab(tabId) {
-      currentTab = tabId;
-      tabButtons.forEach(btn => {
-        btn.classList.toggle('is-active', btn.getAttribute('data-ws-tab') === tabId);
-      });
-      const views = modalBody.querySelectorAll('.ws-view');
-      views.forEach(v => {
-        v.classList.toggle('is-active', v.getAttribute('data-view') === tabId);
-      });
-    }
-
-    tabButtons.forEach(btn => {
-      btn.addEventListener('click', (e) => {
-        e.preventDefault();
-        setTab(btn.getAttribute('data-ws-tab'));
-      });
-    });
 
     function closeModal() {
       modal.classList.remove('is-open');
@@ -915,7 +894,6 @@
         activeCleanup = null;
       }
 
-      currentDemoId = demoId;
       document.body.style.overflow = 'hidden';
       modal.classList.add('is-open');
       modal.setAttribute('aria-hidden', 'false');
@@ -945,8 +923,6 @@
           if (modalTag) modalTag.textContent = 'READY';
           modalBody.innerHTML = '<p class="mono">Workstation module not found.</p>';
       }
-
-      setTab('sim');
     }
 
     document.addEventListener('click', (e) => {
@@ -987,103 +963,52 @@
       ];
 
       bodyEl.innerHTML = `
-        <!-- TAB 01: SIMULATOR -->
-        <div class="ws-view ws-view--sim is-active" data-view="sim">
-          <div class="ws-hud">
-            <div class="ws-hud__item">
-              <span class="ws-hud__label">Indexed Dossiers</span>
-              <span class="ws-hud__val" style="color:#4ade80;">242,109</span>
-            </div>
-            <div class="ws-hud__item">
-              <span class="ws-hud__label">Critical CVSS (≥9.0)</span>
-              <span class="ws-hud__val" style="color:#f87171;">14,812</span>
-            </div>
-            <div class="ws-hud__item">
-              <span class="ws-hud__label">Ransomware Linked</span>
-              <span class="ws-hud__val" style="color:#fbbf24;">3,420</span>
-            </div>
-            <div class="ws-hud__item">
-              <span class="ws-hud__label">Mean EPSS Risk</span>
-              <span class="ws-hud__val" style="color:#38bdf8;">78.4%</span>
-            </div>
-            <div class="ws-hud__item">
-              <span class="ws-hud__label">Feed Telemetry</span>
-              <span class="ws-hud__val" style="color:#a78bfa; font-size:0.95rem;">[● LIVE] NVD v2.0</span>
-            </div>
+        <div class="ws-hud">
+          <div class="ws-hud__item">
+            <span class="ws-hud__label">Indexed Dossiers</span>
+            <span class="ws-hud__val" style="color:#4ade80;">242,109</span>
           </div>
-
-          <div class="ws-split">
-            <div class="ws-deck">
-              <div class="ws-deck__title">Ecosystem Filters</div>
-              <div style="display:flex; flex-direction:column; gap:0.4rem;">
-                <button type="button" class="btn btn--sm btn--primary cve-filter-btn" data-eco="ALL">All Ecosystems</button>
-                <button type="button" class="btn btn--sm btn--ghost cve-filter-btn" data-eco="LINUX KERNEL">Linux Kernel</button>
-                <button type="button" class="btn btn--sm btn--ghost cve-filter-btn" data-eco="OPENSSL">OpenSSL &amp; Crypto</button>
-                <button type="button" class="btn btn--sm btn--ghost cve-filter-btn" data-eco="AUTH/OAUTH2">Auth &amp; Tokens</button>
-                <button type="button" class="btn btn--sm btn--ghost cve-filter-btn" data-eco="BGP/NETWORKING">Networking &amp; BGP</button>
-              </div>
-
-              <div class="ws-deck__title" style="margin-top:0.5rem;">Fast Search</div>
-              <input type="text" id="ws-cve-query" placeholder="Type CVE-ID or vector..." 
-                style="background:#020306; border:1px solid rgba(255,255,255,0.12); padding:0.55rem 0.75rem; border-radius:5px; color:#fff; font-family:var(--font-mono); font-size:0.75rem;">
-              
-              <div class="mono" style="font-size:0.7rem; color:var(--text-muted); line-height:1.5;">
-                Engine: SQLite FTS5<br>
-                Index Alloc: 0 B / query<br>
-                Latency: &lt; 0.8 ms
-              </div>
-            </div>
-
-            <div class="ws-terminal" id="ws-cve-table" style="max-height: 480px;"></div>
+          <div class="ws-hud__item">
+            <span class="ws-hud__label">Critical CVSS (≥9.0)</span>
+            <span class="ws-hud__val" style="color:#f87171;">14,812</span>
+          </div>
+          <div class="ws-hud__item">
+            <span class="ws-hud__label">Ransomware Linked</span>
+            <span class="ws-hud__val" style="color:#fbbf24;">3,420</span>
+          </div>
+          <div class="ws-hud__item">
+            <span class="ws-hud__label">Mean EPSS Risk</span>
+            <span class="ws-hud__val" style="color:#38bdf8;">78.4%</span>
+          </div>
+          <div class="ws-hud__item">
+            <span class="ws-hud__label">Feed Telemetry</span>
+            <span class="ws-hud__val" style="color:#a78bfa; font-size:0.95rem;">[● LIVE] NVD v2.0</span>
           </div>
         </div>
 
-        <!-- TAB 02: ARCHITECTURE & RFC -->
-        <div class="ws-view ws-view--rfc" data-view="rfc">
-          <div class="ws-terminal" style="height: 100%; white-space: pre; font-size: 0.72rem; line-height: 1.5;">
-+--------------------------------------------------------------------------------------------------+
-|                                    CVEGRID SYSTEM ARCHITECTURE                                   |
-+--------------------------------------------------------------------------------------------------+
+        <div class="ws-split" style="margin-top: 1rem;">
+          <div class="ws-deck">
+            <div class="ws-deck__title">Ecosystem Filters</div>
+            <div style="display:flex; flex-direction:column; gap:0.4rem;">
+              <button type="button" class="btn btn--sm btn--primary cve-filter-btn" data-eco="ALL">All Ecosystems</button>
+              <button type="button" class="btn btn--sm btn--ghost cve-filter-btn" data-eco="LINUX KERNEL">Linux Kernel</button>
+              <button type="button" class="btn btn--sm btn--ghost cve-filter-btn" data-eco="OPENSSL">OpenSSL &amp; Crypto</button>
+              <button type="button" class="btn btn--sm btn--ghost cve-filter-btn" data-eco="AUTH/OAUTH2">Auth &amp; Tokens</button>
+              <button type="button" class="btn btn--sm btn--ghost cve-filter-btn" data-eco="BGP/NETWORKING">Networking &amp; BGP</button>
+            </div>
 
-   [ NVD REST API v2.0 ]       [ CISA KEV Catalog ]        [ FIRST.org EPSS Feed ]
-            |                           |                           |
-            +---------------------------+---------------------------+
-                                        |
-                            ( Multi-Worker Ingestion )
-                                        |
-                                [ sync.Pool Worker ]
-                                        |
-                 +----------------------+----------------------+
-                 |                                             |
-     [ SQLite FTS5 Full-Text ]                    [ Local In-Memory Ring Buffer ]
-                 |                                             |
-     +-----------+-----------+                     +-----------+-----------+
-     |                       |                     |                       |
-[ CLI Bubbletea TUI ]  [ REST Server ]       [ JSON Telemetry ]   [ Web CTI Matrix ]
+            <div class="ws-deck__title" style="margin-top:0.5rem;">Fast Search</div>
+            <input type="text" id="ws-cve-query" placeholder="Type CVE-ID or vector..." 
+              style="background:#020306; border:1px solid rgba(255,255,255,0.12); padding:0.55rem 0.75rem; border-radius:5px; color:#fff; font-family:var(--font-mono); font-size:0.75rem;">
+            
+            <div class="mono" style="font-size:0.7rem; color:var(--text-muted); line-height:1.5;">
+              Engine: SQLite FTS5<br>
+              Index Alloc: 0 B / query<br>
+              Latency: &lt; 0.8 ms
+            </div>
           </div>
-        </div>
 
-        <!-- TAB 03: SPECS & BENCHMARKS -->
-        <div class="ws-view ws-view--bench" data-view="bench">
-          <div class="ws-terminal" style="height: 100%; line-height: 1.6; font-size: 0.75rem;">
-=== CVEGRID PERFORMANCE &amp; CODE COMPLIANCE ===
-
-Test Suite Verification:
-  [PASS] TestWeb_PortHunting (0.00s)
-  [PASS] TestLocale_Detection (0.00s)
-  [PASS] TestDaemon_StateFile (0.00s)
-  [PASS] TestParser_StreamParsing (0.00s)
-  [PASS] TestParser_CTIEnrichment (0.00s)
-  [PASS] TestParser_TaxonomyClassification (0.00s)
-  [PASS] TestRepository_UpsertAndQuery (0.00s)
-  [PASS] TestWebServer_Endpoints (0.00s)
-  Status: 100% Pass (0 race condition warnings)
-
-Throughput &amp; Storage Footprint:
-  - SQLite FTS5 Index Size: 48 MB for 242,109 indexed vulnerabilities
-  - Query Latency: 0.42 ms (p50), 1.12 ms (p99) under concurrent FTS lookup
-  - Memory Footprint (Daemon): 18.4 MB RSS
-          </div>
+          <div class="ws-terminal" id="ws-cve-table" style="max-height: 480px;"></div>
         </div>
       `;
 
@@ -1148,75 +1073,32 @@ Throughput &amp; Storage Footprint:
       if (tagEl) tagEl.textContent = 'Stateful L4/L7 Engine';
 
       bodyEl.innerHTML = `
-        <div class="ws-view ws-view--sim is-active" data-view="sim">
-          <div class="ws-hud">
-            <div class="ws-hud__item"><span class="ws-hud__label">Conntrack Flows</span><span class="ws-hud__val" id="pv-flows">48</span></div>
-            <div class="ws-hud__item"><span class="ws-hud__label">Ingress Throughput</span><span class="ws-hud__val" style="color:#38bdf8;" id="pv-ingress">1.4 Mpps</span></div>
-            <div class="ws-hud__item"><span class="ws-hud__label">L4 Passed</span><span class="ws-hud__val" style="color:#4ade80;" id="pv-passed">2,840</span></div>
-            <div class="ws-hud__item"><span class="ws-hud__label">ACL Dropped</span><span class="ws-hud__val" style="color:#f87171;" id="pv-dropped">14</span></div>
-            <div class="ws-hud__item"><span class="ws-hud__label">Anti-SYN Tarpitted</span><span class="ws-hud__val" style="color:#fbbf24;" id="pv-tarpit">0</span></div>
-          </div>
+        <div class="ws-hud">
+          <div class="ws-hud__item"><span class="ws-hud__label">Conntrack Flows</span><span class="ws-hud__val" id="pv-flows">48</span></div>
+          <div class="ws-hud__item"><span class="ws-hud__label">Ingress Throughput</span><span class="ws-hud__val" style="color:#38bdf8;" id="pv-ingress">1.4 Mpps</span></div>
+          <div class="ws-hud__item"><span class="ws-hud__label">L4 Passed</span><span class="ws-hud__val" style="color:#4ade80;" id="pv-passed">2,840</span></div>
+          <div class="ws-hud__item"><span class="ws-hud__label">ACL Dropped</span><span class="ws-hud__val" style="color:#f87171;" id="pv-dropped">14</span></div>
+          <div class="ws-hud__item"><span class="ws-hud__label">Anti-SYN Tarpitted</span><span class="ws-hud__val" style="color:#fbbf24;" id="pv-tarpit">0</span></div>
+        </div>
 
-          <!-- Dynamic 60 FPS Network Pipeline Canvas -->
-          <div class="ws-canvas-wrap">
-            <canvas id="pv-canvas" class="ws-canvas"></canvas>
-            <div class="ws-canvas-badge mono">eBPF TC PIPELINE: 60 FPS</div>
-          </div>
+        <!-- Dynamic 60 FPS Network Pipeline Canvas -->
+        <div class="ws-canvas-wrap" style="margin-top: 1rem;">
+          <canvas id="pv-canvas" class="ws-canvas"></canvas>
+          <div class="ws-canvas-badge mono">eBPF TC PIPELINE: 60 FPS</div>
+        </div>
 
-          <div class="ws-split">
-            <div class="ws-deck">
-              <div class="ws-deck__title">Traffic Injection Deck</div>
-              <div class="ws-deck__btn-group">
-                <button type="button" class="btn btn--sm btn--secondary" id="pv-btn-flood">⚡ Volumetric SYN Flood (50k PPS)</button>
-                <button type="button" class="btn btn--sm btn--secondary" id="pv-btn-drop">🛡️ Inject Port 23 Malicious Probe</button>
-                <button type="button" class="btn btn--sm btn--secondary" id="pv-btn-smb">🚫 Drop Port 445 SMB Attack</button>
-                <button type="button" class="btn btn--sm btn--ghost" id="pv-btn-flush">🔄 Flush Conntrack Table</button>
-              </div>
+        <div class="ws-split" style="margin-top: 1rem;">
+          <div class="ws-deck">
+            <div class="ws-deck__title">Traffic Injection Deck</div>
+            <div class="ws-deck__btn-group">
+              <button type="button" class="btn btn--sm btn--secondary" id="pv-btn-flood">⚡ Volumetric SYN Flood (50k PPS)</button>
+              <button type="button" class="btn btn--sm btn--secondary" id="pv-btn-drop">🛡️ Inject Port 23 Malicious Probe</button>
+              <button type="button" class="btn btn--sm btn--secondary" id="pv-btn-smb">🚫 Drop Port 445 SMB Attack</button>
+              <button type="button" class="btn btn--sm btn--ghost" id="pv-btn-flush">🔄 Flush Conntrack Table</button>
             </div>
-
-            <div class="ws-terminal" id="pv-terminal" style="max-height: 280px;"></div>
           </div>
-        </div>
 
-        <div class="ws-view ws-view--rfc" data-view="rfc">
-          <div class="ws-terminal" style="height: 100%; white-space: pre; font-size: 0.72rem; line-height: 1.5;">
-+--------------------------------------------------------------------------------------------------+
-|                               PACKETVEIL CONNTRACK &amp; FILTER PIPELINE                             |
-+--------------------------------------------------------------------------------------------------+
-
-   [ NIC Ingress Ring Buffer (eBPF XDP Driver Mode) ]
-                           |
-                           v
-            ( Sliding-Window Anti-SYN Shield )
-                    /               \
-         [ SYN Rate > Threshold ]   [ Normal Rate ]
-                    |                       |
-            [ ACTION: TARPIT ]              v
-                                  ( 4-Tuple Hash Table Lookup )
-                                          /               \
-                                 [ Flow Exists ]     [ Flow Missing / SYN ]
-                                         |                    |
-                                 [ State: ESTAB ]      ( ACL Rule Evaluator )
-                                         |                 /          \
-                                 ( Zero-Alloc PASS )  [ PASS ]      [ DROP ]
-          </div>
-        </div>
-
-        <div class="ws-view ws-view--bench" data-view="bench">
-          <div class="ws-terminal" style="height: 100%; line-height: 1.6; font-size: 0.75rem;">
-=== PACKETVEIL KERNEL BENCHMARKS (AMD Ryzen 9 6900HX - Linux 6.x) ===
-
-BenchmarkInspect_EstablishedFlow-16:
-  - Iterations:  12,906,974 ops
-  - Speed:       94.99 ns/op
-  - Memory:      0 B/op (Zero Heap Allocations on Fast-Path)
-  - Allocs:      0 allocs/op
-
-Concurrency &amp; Race Detector:
-  - Multi-threaded worker test: 32 concurrent goroutines flooding 500,000 packets
-  - Command: go test -v -race ./pkg/filter
-  - Result:  PASS (0 data races, 0 memory corruption)
-          </div>
+          <div class="ws-terminal" id="pv-terminal" style="max-height: 280px;"></div>
         </div>
       `;
 
@@ -1368,83 +1250,39 @@ Concurrency &amp; Race Detector:
       if (tagEl) tagEl.textContent = 'Lock-Free Token Bucket';
 
       bodyEl.innerHTML = `
-        <div class="ws-view ws-view--sim is-active" data-view="sim">
-          <div class="ws-hud">
-            <div class="ws-hud__item"><span class="ws-hud__label">Tokens Available</span><span class="ws-hud__val" id="rl-tokens">500,000</span></div>
-            <div class="ws-hud__item"><span class="ws-hud__label">Evaluation Rate</span><span class="ws-hud__val" style="color:#38bdf8;" id="rl-rate-val">1,000,000 /s</span></div>
-            <div class="ws-hud__item"><span class="ws-hud__label">Passed Reqs</span><span class="ws-hud__val" style="color:#4ade80;" id="rl-passed">0</span></div>
-            <div class="ws-hud__item"><span class="ws-hud__label">Throttled (429)</span><span class="ws-hud__val" style="color:#f87171;" id="rl-throttled">0</span></div>
-            <div class="ws-hud__item"><span class="ws-hud__label">Heap Allocation</span><span class="ws-hud__val" style="color:#a78bfa;">0 B / op</span></div>
-          </div>
+        <div class="ws-hud">
+          <div class="ws-hud__item"><span class="ws-hud__label">Tokens Available</span><span class="ws-hud__val" id="rl-tokens">500,000</span></div>
+          <div class="ws-hud__item"><span class="ws-hud__label">Evaluation Rate</span><span class="ws-hud__val" style="color:#38bdf8;" id="rl-rate-val">1,000,000 /s</span></div>
+          <div class="ws-hud__item"><span class="ws-hud__label">Passed Reqs</span><span class="ws-hud__val" style="color:#4ade80;" id="rl-passed">0</span></div>
+          <div class="ws-hud__item"><span class="ws-hud__label">Throttled (429)</span><span class="ws-hud__val" style="color:#f87171;" id="rl-throttled">0</span></div>
+          <div class="ws-hud__item"><span class="ws-hud__label">Heap Allocation</span><span class="ws-hud__val" style="color:#a78bfa;">0 B / op</span></div>
+        </div>
 
-          <!-- Live Oscilloscope Canvas -->
-          <div class="ws-canvas-wrap">
-            <canvas id="rl-canvas" class="ws-canvas"></canvas>
-            <div class="ws-canvas-badge mono">TOKEN BUCKET OSCILLOSCOPE (60 FPS)</div>
-          </div>
+        <!-- Live Oscilloscope Canvas -->
+        <div class="ws-canvas-wrap" style="margin-top: 1rem;">
+          <canvas id="rl-canvas" class="ws-canvas"></canvas>
+          <div class="ws-canvas-badge mono">TOKEN BUCKET OSCILLOSCOPE (60 FPS)</div>
+        </div>
 
-          <div class="ws-split">
-            <div class="ws-deck">
-              <div class="ws-deck__title">Concurrency Shaper Controls</div>
-              <div style="display:flex; flex-direction:column; gap:0.75rem;">
-                <div class="mono" style="font-size:0.72rem; color:var(--text-muted);">
-                  Refill Rate: <b id="rl-slider-label" style="color:#38bdf8;">1,000,000 /s</b>
-                </div>
-                <input type="range" id="rl-slider" min="100000" max="10000000" step="100000" value="1000000" style="width:100%; accent-color:#38bdf8;">
+        <div class="ws-split" style="margin-top: 1rem;">
+          <div class="ws-deck">
+            <div class="ws-deck__title">Concurrency Shaper Controls</div>
+            <div style="display:flex; flex-direction:column; gap:0.75rem;">
+              <div class="mono" style="font-size:0.72rem; color:var(--text-muted);">
+                Refill Rate: <b id="rl-slider-label" style="color:#38bdf8;">1,000,000 /s</b>
               </div>
-
-              <div class="ws-deck__title" style="margin-top:0.5rem;">SMP Cache-Line Alignment</div>
-              <div class="mono" style="font-size:0.7rem; color:var(--text-muted); line-height:1.5;">
-                • Line 0 (64B): tokens: atomic.Int64 + 56B Pad<br>
-                • Line 1 (64B): lastUpdate: atomic.Int64 + 56B Pad<br>
-                Result: Zero L1 cache invalidations across CPU cores
-              </div>
+              <input type="range" id="rl-slider" min="100000" max="10000000" step="100000" value="1000000" style="width:100%; accent-color:#38bdf8;">
             </div>
 
-            <div class="ws-terminal" id="rl-terminal" style="max-height: 280px;"></div>
+            <div class="ws-deck__title" style="margin-top:0.5rem;">SMP Cache-Line Alignment</div>
+            <div class="mono" style="font-size:0.7rem; color:var(--text-muted); line-height:1.5;">
+              • Line 0 (64B): tokens: atomic.Int64 + 56B Pad<br>
+              • Line 1 (64B): lastUpdate: atomic.Int64 + 56B Pad<br>
+              Result: Zero L1 cache invalidations across CPU cores
+            </div>
           </div>
-        </div>
 
-        <div class="ws-view ws-view--rfc" data-view="rfc">
-          <div class="ws-terminal" style="height: 100%; white-space: pre; font-size: 0.72rem; line-height: 1.5;">
-+--------------------------------------------------------------------------------------------------+
-|                             RINGLIMIT CACHE-LINE MEMORY LAYOUT                                   |
-+--------------------------------------------------------------------------------------------------+
-
-  L1 Data Cache Boundary (64 Bytes per Line on x86_64 / ARM64):
-
-  Line 0: [ tokens: atomic.Int64 (8B) ] [ pad: [56]byte (56B) ]  <--- Core 0 Access
-  ----------------------------------------------------------------------------------
-  Line 1: [ lastUpdate: atomic.Int64 (8B) ] [ pad: [56]byte (56B) ] <--- Core 1 Access
-
-  Lock-Free CAS Loop:
-    1. Read tokens & lastUpdate via atomic.Load()
-    2. Compute nanosecond delta: refill = (elapsed * rate) / 1e9
-    3. Calculate newTokens = min(burst, tokens + refill) - requested
-    4. atomic.CompareAndSwap(tokens, old, new) -> On failure, retry without thread sleep.
-          </div>
-        </div>
-
-        <div class="ws-view ws-view--bench" data-view="bench">
-          <div class="ws-terminal" style="height: 100%; line-height: 1.6; font-size: 0.75rem;">
-=== RINGLIMIT BENCHMARK SUITE (AMD Ryzen 9 6900HX - Linux 6.x) ===
-
-BenchmarkLimiter_Allow-16:
-  - Total Runs:  26,806,790 ops
-  - Speed:       44.48 ns/op
-  - Memory:      0 B/op
-  - Allocs:      0 allocs/op
-
-BenchmarkLimiter_AllowParallel-16 (Contended SMP Multi-threading):
-  - Total Runs:  32,820,567 ops (32.8M operations/second)
-  - Speed:       33.65 ns/op
-  - Memory:      0 B/op
-  - Allocs:      0 allocs/op
-
-1-Second Stress Evaluation Test:
-  - Total Evaluated: 49,232,459 requests
-  - Throughput:      49.23 Mreq/sec
-          </div>
+          <div class="ws-terminal" id="rl-terminal" style="max-height: 280px;"></div>
         </div>
       `;
 
@@ -1557,79 +1395,34 @@ BenchmarkLimiter_AllowParallel-16 (Contended SMP Multi-threading):
       if (tagEl) tagEl.textContent = 'Append-Only WAL Engine';
 
       bodyEl.innerHTML = `
-        <div class="ws-view ws-view--sim is-active" data-view="sim">
-          <div class="ws-hud">
-            <div class="ws-hud__item"><span class="ws-hud__label">Active MemTable Keys</span><span class="ws-hud__val" style="color:#4ade80;" id="wv-keys">10</span></div>
-            <div class="ws-hud__item"><span class="ws-hud__label">WAL Size on Disk</span><span class="ws-hud__val" id="wv-disk">1.42 KB</span></div>
-            <div class="ws-hud__item"><span class="ws-hud__label">Tail Integrity</span><span class="ws-hud__val" style="color:#38bdf8;" id="wv-crc">PASS (100%)</span></div>
-            <div class="ws-hud__item"><span class="ws-hud__label">Recovery Latency</span><span class="ws-hud__val" style="color:#a78bfa;" id="wv-replay">&lt; 0.4 ms</span></div>
-            <div class="ws-hud__item"><span class="ws-hud__label">Fsync Policy</span><span class="ws-hud__val" style="color:#fbbf24; font-size:0.95rem;">SyncPeriodic</span></div>
-          </div>
-
-          <!-- Color-Coded Hex Dump Matrix -->
-          <div style="background:#030508; border:1px solid rgba(255,255,255,0.08); border-radius:8px; padding:0.85rem;">
-            <div style="display:flex; justify-content:space-between; margin-bottom:0.5rem;" class="mono">
-              <span style="font-size:0.7rem; color:var(--text-muted);">ACTIVE WAL BINARY FRAME INSPECTOR (11-BYTE HEADER + PAYLOAD)</span>
-              <span style="font-size:0.7rem; color:#38bdf8;">[CRC32: 4B] [OP: 1B] [KEYLEN: 2B] [VALLEN: 4B]</span>
-            </div>
-            <div class="ws-hex-grid" id="wv-hex-dump"></div>
-          </div>
-
-          <div class="ws-split">
-            <div class="ws-deck">
-              <div class="ws-deck__title">Crash Simulation Actions</div>
-              <div class="ws-deck__btn-group">
-                <button type="button" class="btn btn--sm btn--primary" id="wv-btn-put">📝 Append 10 Key-Value Writes</button>
-                <button type="button" class="btn btn--sm btn--secondary" id="wv-btn-crash" style="border-color:#f87171; color:#f87171;">💥 Simulate Power Outage (Torn Tail)</button>
-                <button type="button" class="btn btn--sm btn--secondary" id="wv-btn-recover">🔄 Replay &amp; Zero-Loss Recover</button>
-              </div>
-            </div>
-
-            <div class="ws-terminal" id="wv-terminal" style="max-height: 240px;"></div>
-          </div>
+        <div class="ws-hud">
+          <div class="ws-hud__item"><span class="ws-hud__label">Active MemTable Keys</span><span class="ws-hud__val" style="color:#4ade80;" id="wv-keys">10</span></div>
+          <div class="ws-hud__item"><span class="ws-hud__label">WAL Size on Disk</span><span class="ws-hud__val" id="wv-disk">1.42 KB</span></div>
+          <div class="ws-hud__item"><span class="ws-hud__label">Tail Integrity</span><span class="ws-hud__val" style="color:#38bdf8;" id="wv-crc">PASS (100%)</span></div>
+          <div class="ws-hud__item"><span class="ws-hud__label">Recovery Latency</span><span class="ws-hud__val" style="color:#a78bfa;" id="wv-replay">&lt; 0.4 ms</span></div>
+          <div class="ws-hud__item"><span class="ws-hud__label">Fsync Policy</span><span class="ws-hud__val" style="color:#fbbf24; font-size:0.95rem;">SyncPeriodic</span></div>
         </div>
 
-        <div class="ws-view ws-view--rfc" data-view="rfc">
-          <div class="ws-terminal" style="height: 100%; white-space: pre; font-size: 0.72rem; line-height: 1.5;">
-+--------------------------------------------------------------------------------------------------+
-|                                    WALKV BINARY RECORD FORMAT                                    |
-+--------------------------------------------------------------------------------------------------+
-
-  +-------------------+-----------------+-------------------+-------------------+
-  |  CRC32 (4 Bytes)  | OpType (1 Byte) | KeyLen (2 Bytes)  | ValLen (4 Bytes)  |
-  +-------------------+-----------------+-------------------+-------------------+
-  |                         Key Bytes [0 .. KeyLen]                                 |
-  +---------------------------------------------------------------------------------+
-  |                        Value Bytes [0 .. ValLen]                                |
-  +---------------------------------------------------------------------------------+
-
-  Crash Recovery &amp; Torn Write Handling:
-    1. During startup, Recover() reads record headers via io.ReadFull().
-    2. If power was lost during mid-write, unexpected EOF is encountered on incomplete header.
-    3. walkv cleanly truncates the torn tail byte sequence without failing the database.
-    4. Valid mutations are restored to the in-memory MemTable in under 1 millisecond.
+        <!-- Color-Coded Hex Dump Matrix -->
+        <div style="background:#030508; border:1px solid rgba(255,255,255,0.08); border-radius:8px; padding:0.85rem; margin-top: 1rem;">
+          <div style="display:flex; justify-content:space-between; margin-bottom:0.5rem;" class="mono">
+            <span style="font-size:0.7rem; color:var(--text-muted);">ACTIVE WAL BINARY FRAME INSPECTOR (11-BYTE HEADER + PAYLOAD)</span>
+            <span style="font-size:0.7rem; color:#38bdf8;">[CRC32: 4B] [OP: 1B] [KEYLEN: 2B] [VALLEN: 4B]</span>
           </div>
+          <div class="ws-hex-grid" id="wv-hex-dump"></div>
         </div>
 
-        <div class="ws-view ws-view--bench" data-view="bench">
-          <div class="ws-terminal" style="height: 100%; line-height: 1.6; font-size: 0.75rem;">
-=== WALKV STORAGE ENGINE BENCHMARKS (AMD Ryzen 9 6900HX - Linux 6.x) ===
-
-BenchmarkWAL_Put_Async-16:
-  - Iterations:  7,278,229 writes
-  - Speed:       156.3 ns/op
-  - Memory:      184 B/op (3 allocs/op)
-  - Throughput:  6.4 Million writes/second
-
-BenchmarkMemTable_Get-16:
-  - Iterations:  43,559,262 reads
-  - Speed:       24.55 ns/op
-  - Memory:      16 B/op (1 alloc/op)
-  - Throughput:  40.7 Million reads/second
-
-Crash Resilience Test:
-  - 100 keys written, 7 corrupt trailing bytes injected -> 100% recovered cleanly.
+        <div class="ws-split" style="margin-top: 1rem;">
+          <div class="ws-deck">
+            <div class="ws-deck__title">Crash Simulation Actions</div>
+            <div class="ws-deck__btn-group">
+              <button type="button" class="btn btn--sm btn--primary" id="wv-btn-put">📝 Append 10 Key-Value Writes</button>
+              <button type="button" class="btn btn--sm btn--secondary" id="wv-btn-crash" style="border-color:#f87171; color:#f87171;">💥 Simulate Power Outage (Torn Tail)</button>
+              <button type="button" class="btn btn--sm btn--secondary" id="wv-btn-recover">🔄 Replay &amp; Zero-Loss Recover</button>
+            </div>
           </div>
+
+          <div class="ws-terminal" id="wv-terminal" style="max-height: 240px;"></div>
         </div>
       `;
 
@@ -1711,74 +1504,33 @@ Crash Resilience Test:
       if (tagEl) tagEl.textContent = 'Zero-Trust TLS 1.3';
 
       bodyEl.innerHTML = `
-        <div class="ws-view ws-view--sim is-active" data-view="sim">
-          <div class="ws-hud">
-            <div class="ws-hud__item"><span class="ws-hud__label">Negotiated Protocol</span><span class="ws-hud__val" style="color:#4ade80;" id="tls-ver">TLS 1.3</span></div>
-            <div class="ws-hud__item"><span class="ws-hud__label">Zero-Trust Rating</span><span class="ws-hud__val" style="color:#2dd4bf;" id="tls-rating">A+ (SECURE)</span></div>
-            <div class="ws-hud__item"><span class="ws-hud__label">ALPN Multiplex</span><span class="ws-hud__val" style="color:#fbbf24;" id="tls-alpn">h2 (HTTP/2)</span></div>
-            <div class="ws-hud__item"><span class="ws-hud__label">Handshake RTT</span><span class="ws-hud__val" style="color:#38bdf8;" id="tls-rtt">24 ms</span></div>
-            <div class="ws-hud__item"><span class="ws-hud__label">Certificate Expiry</span><span class="ws-hud__val" style="color:#a78bfa;" id="tls-cert">86 Days Valid</span></div>
-          </div>
+        <div class="ws-hud">
+          <div class="ws-hud__item"><span class="ws-hud__label">Negotiated Protocol</span><span class="ws-hud__val" style="color:#4ade80;" id="tls-ver">TLS 1.3</span></div>
+          <div class="ws-hud__item"><span class="ws-hud__label">Zero-Trust Rating</span><span class="ws-hud__val" style="color:#2dd4bf;" id="tls-rating">A+ (SECURE)</span></div>
+          <div class="ws-hud__item"><span class="ws-hud__label">ALPN Multiplex</span><span class="ws-hud__val" style="color:#fbbf24;" id="tls-alpn">h2 (HTTP/2)</span></div>
+          <div class="ws-hud__item"><span class="ws-hud__label">Handshake RTT</span><span class="ws-hud__val" style="color:#38bdf8;" id="tls-rtt">24 ms</span></div>
+          <div class="ws-hud__item"><span class="ws-hud__label">Certificate Expiry</span><span class="ws-hud__val" style="color:#a78bfa;" id="tls-cert">86 Days Valid</span></div>
+        </div>
 
-          <div class="ws-split">
-            <div class="ws-deck">
-              <div class="ws-deck__title">Target Host Audit</div>
-              <div style="display:flex; flex-direction:column; gap:0.5rem;">
-                <input type="text" id="ws-tls-host" value="hasancicek.dev:443" 
-                  style="background:#020306; border:1px solid rgba(255,255,255,0.12); padding:0.55rem 0.75rem; border-radius:5px; color:#fff; font-family:var(--font-mono); font-size:0.75rem;">
-                <button type="button" class="btn btn--sm btn--primary" id="ws-tls-audit-btn">Audit TLS Handshake</button>
-              </div>
-
-              <div class="ws-deck__title" style="margin-top:0.5rem;">AEAD Cipher Verification</div>
-              <div class="mono" style="font-size:0.7rem; color:var(--text-muted); line-height:1.5;">
-                • Suite: TLS_AES_128_GCM_SHA256<br>
-                • KeyShare: Curve25519 (ECDHE)<br>
-                • Insecure Ciphers (CBC/RC4): BLOCKED
-              </div>
+        <div class="ws-split" style="margin-top: 1rem;">
+          <div class="ws-deck">
+            <div class="ws-deck__title">Target Host Audit</div>
+            <div style="display:flex; flex-direction:column; gap:0.5rem;">
+              <input type="text" id="ws-tls-host" value="hasancicek.dev:443" 
+                style="background:#020306; border:1px solid rgba(255,255,255,0.12); padding:0.55rem 0.75rem; border-radius:5px; color:#fff; font-family:var(--font-mono); font-size:0.75rem;">
+              <button type="button" class="btn btn--sm btn--primary" id="ws-tls-audit-btn">Audit TLS Handshake</button>
             </div>
 
-            <!-- RFC 8446 Interactive Flight Sequence Diagram -->
-            <div class="ws-terminal" id="ws-tls-flights" style="max-height: 380px;"></div>
+            <div class="ws-deck__title" style="margin-top:0.5rem;">AEAD Cipher Verification</div>
+            <div class="mono" style="font-size:0.7rem; color:var(--text-muted); line-height:1.5;">
+              • Suite: TLS_AES_128_GCM_SHA256<br>
+              • KeyShare: Curve25519 (ECDHE)<br>
+              • Insecure Ciphers (CBC/RC4): BLOCKED
+            </div>
           </div>
-        </div>
 
-        <div class="ws-view ws-view--rfc" data-view="rfc">
-          <div class="ws-terminal" style="height: 100%; white-space: pre; font-size: 0.72rem; line-height: 1.5;">
-+--------------------------------------------------------------------------------------------------+
-|                             TLS 1.3 FULL 1-RTT HANDSHAKE FLIGHT SEQUENCE                         |
-+--------------------------------------------------------------------------------------------------+
-
-  Client                                              Server
-    |                                                   |
-    | ------- ClientHello (KeyShare, ALPN, SNI) ------> |  [0-RTT / Plaintext]
-    |                                                   |
-    | <------ ServerHello (KeyShare selected) --------- |  [Derive Handshake Keys]
-    | <====== {EncryptedExtensions} =================== |  [1-RTT / AEAD Encrypted]
-    | <====== {Certificate + CertVerify} ============== |
-    | <====== {Finished} ============================== |
-    |                                                   |
-    | ======> {Finished} ============================== |  [Derive Master Secret]
-    |                                                   |
-    | <=====> [Application Traffic (AES-GCM)] <=======> |  [Full Zero-Trust Secure Channel]
-          </div>
-        </div>
-
-        <div class="ws-view ws-view--bench" data-view="bench">
-          <div class="ws-terminal" style="height: 100%; line-height: 1.6; font-size: 0.75rem;">
-=== TLSVAULT AUDITOR BENCHMARKS (AMD Ryzen 9 6900HX - Linux 6.x) ===
-
-BenchmarkEvaluateCipher-16:
-  - Iterations:  2,668,800 evaluations
-  - Speed:       403.9 ns/op
-  - Rating:      Zero-Trust RFC 8446 Compliant
-
-Live Probe Verification:
-  - Remote:     hasancicek.dev:443 (104.21.94.115)
-  - Protocol:   TLS 1.3
-  - Cipher:     TLS_AES_128_GCM_SHA256
-  - ALPN:       h2
-  - Cert Days:  86 days remaining
-          </div>
+          <!-- RFC 8446 Interactive Flight Sequence Diagram -->
+          <div class="ws-terminal" id="ws-tls-flights" style="max-height: 380px;"></div>
         </div>
       `;
 
